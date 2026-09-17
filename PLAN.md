@@ -75,9 +75,16 @@ Goal: something a judge can *watch* and understand in 90 seconds.
 - [ ] Tools v2: `get_leave_balance`, `request_leave`, `approve_leave`, `who_is_late`,
       `next_shift`. Resources: today's roster as an MCP resource. Prompts: one "morning briefing".
 - [ ] Simulated Alexa+ web app (`apps/sim`, Next.js — Joy-framework conventions): a chat/voice
-      UI that speaks to Claude/any LLM with the MCP server attached, rendered to look like an
-      Alexa+ conversation. Voice in via Web Speech API, voice out via speechSynthesis. This is
-      the demo surface if Preview access does not materialise, and the B-roll if it does.
+      UI rendered to look like an Alexa+ conversation. Voice in via Web Speech API, voice out
+      via speechSynthesis. This is the demo surface if Preview access does not materialise,
+      and the B-roll if it does.
+      **Model budget is zero — no new API keys or subscriptions (Joy, 2026-09-17).** The agent
+      behind the sim is therefore:
+      1. For the recorded demo: **`claude -p` on the Max plan** with `--mcp-config` pointing at
+         our server (rules allow "any AI or agentic tool" for the simulated path). Codex CLI
+         `exec` with MCP is the equivalent if preferred.
+      2. For a live link judges can click: **Gemini API free tier** (function calling, no card).
+         Demo tenant data only. Optional — judges may score from video + text alone.
 - [ ] Wire the real HRM demo tenant end-to-end. Seed it with a believable 3-site, 40-person
       roster so "who's late" returns interesting answers.
 - [ ] Proactive notification: a cron that calls the LLM with the roster and produces the
@@ -87,9 +94,10 @@ Goal: something a judge can *watch* and understand in 90 seconds.
 
 ## Phase 3 — Mini challenges, if cheap (9–15 Oct)
 
-- [ ] **AWS Builder ($5K):** swap the LLM behind the sim to **Amazon Bedrock** (Claude on
-      Bedrock) via the free tier, or run the proactive briefing on AgentCore. Document the
-      integration in README. One day of work, +$5K ceiling. Do it.
+- [ ] **AWS Builder ($5K):** NOT Bedrock (needs an AWS account with a card — no spend allowed).
+      The rules say *"Kiro Crew qualifies on its own as a development tool"*: use **Kiro's free
+      tier** (AWS Builder ID login, no card) for one documented piece of the build, screenshot
+      it into `docs/proof/`, describe it in README. One afternoon, +$5K ceiling.
 - [ ] **Open Source:** a real PR to an upstream repo we touch during the build (e.g. the MCP
       TypeScript SDK, or Terax — already on the queue). Link it in the submission.
 - [ ] Hard stop 15 Oct. Anything not done here is cut, not stretched.
