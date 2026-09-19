@@ -1,0 +1,15 @@
+{
+  "name": "alexa-plus",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "dev:mcp": "pnpm --filter @alexa-plus/mcp dev"
+  }
+}
