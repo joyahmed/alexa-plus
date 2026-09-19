@@ -31,7 +31,10 @@ const runGemini = async (req: AgentRequest, house: House, apiKey: string): Promi
     if (calls.length === 0) {
       return { text: res.text ?? "Sorry, I didn't catch that.", cards: cardsOf(tools), tools };
     }
-    contents.push({ role: "model", parts: calls.map((fc) => ({ functionCall: fc })) });
+    // Echo the model's own turn back verbatim: Gemini 3 signs function-call parts
+    // (thoughtSignature) and rejects a rebuilt turn that lost them.
+    const modelTurn = res.candidates?.[0]?.content;
+    contents.push(modelTurn ?? { role: "model", parts: calls.map((fc) => ({ functionCall: fc })) });
     const responses = [];
     for (const fc of calls) {
       const trace = await house.call(fc.name ?? "", (fc.args ?? {}) as Record<string, unknown>);
