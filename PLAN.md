@@ -53,10 +53,11 @@ Goal: a self-hosted MCP server, spec 2025-11-25, Streamable HTTP, reachable over
 
 Goal: something a judge can *watch* and understand in 90 seconds.
 
-- [ ] Tools v2: `get_todays_agenda`, `list_vendors`, `schedule_repair`, `check_supplies`,
-      `order_supply` (order record + mock supplier adapter), `notify_host`, `host_briefing`.
+- [x] Tools v2: `get_todays_agenda`, `list_vendors`, `schedule_repair`, `check_supplies`,
+      `order_supply` (order record + simulated supplier adapter), `notify_host`, `host_briefing`.
       Resources: `property://<id>/guide`, `stay://current`. Prompt: `host-morning-briefing`.
-      MCP App: `property-card` (guide + agenda as an interactive card).
+      13 tests, proof in `docs/proof/phase-2-inspector.md`.
+- [ ] MCP App: `property-card` (guide + agenda as an interactive card).
 - [ ] Simulated Alexa+ web app (`apps/sim`, Next.js — Joy-framework conventions): a chat/voice
       UI rendered to look like an Alexa+ conversation. Voice in via Web Speech API, voice out
       via speechSynthesis. This is the demo surface if Preview access does not materialise,

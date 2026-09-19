@@ -34,6 +34,7 @@ export const seed = (db: Db) => {
   vendor.run("plumber", "Dan Whitlock Plumbing", "+1 518 555 0142");
   vendor.run("electrician", "Adirondack Electric", "+1 518 555 0187");
   vendor.run("cleaner", "Marta Ruiz", "+1 518 555 0110");
+  vendor.run("handyman", "Lake Placid Handyman Co.", "+1 518 555 0199");
 
   const supply = db.prepare(
     `INSERT INTO supplies (property_id, item, location, quantity, reorder_at, sku) VALUES ('lakeview', ?, ?, ?, ?, ?)`,

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { registerTools } from "./tools/index.js";
+import { registerHouseTools } from "./tools/house.js";
 import type { Db } from "./db/index.js";
 
 export type AppOptions = { db: Db; propertyId: string; token: string };
@@ -9,6 +10,7 @@ export type AppOptions = { db: Db; propertyId: string; token: string };
 export const buildMcpServer = (db: Db, propertyId: string) => {
   const server = new McpServer({ name: "the-house", version: "0.1.0" });
   registerTools(server, db, propertyId);
+  registerHouseTools(server, db, propertyId);
   return server;
 };
 

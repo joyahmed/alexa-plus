@@ -29,7 +29,7 @@ beforeAll(async () => {
     });
   });
 });
-afterAll(() => new Promise<void>((r) => httpServer.close(() => r())));
+afterAll(() => { httpServer.closeAllConnections?.(); return new Promise<void>((r) => httpServer.close(() => r())); });
 
 describe("the-house MCP server", () => {
   it("rejects a missing bearer token", async () => {
@@ -39,7 +39,7 @@ describe("the-house MCP server", () => {
   it("lists the three v1 tools", async () => {
     const client = await connect();
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(["get_current_stay", "get_property_guide", "report_issue"]);
+    expect(tools.map((t) => t.name)).toEqual(expect.arrayContaining(["get_current_stay", "get_property_guide", "report_issue"]));
     await client.close();
   });
 
