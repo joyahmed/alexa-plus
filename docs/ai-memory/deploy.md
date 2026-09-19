@@ -12,19 +12,11 @@ builds, `.env` is server-owned, health check on `/health`). Process: `ecosystem.
 - ✅ DNS: `alexa.zettabyteincorp.com` A + AAAA → this server (`~/scripts/dns.sh add alexa`), resolving.
 - ✅ **Sim too:** pm2 `alexa-plus-sim` on **3030** (Next standalone, `AGENT=scripted` until a
   `GEMINI_API_KEY` is in `.env`), `/api/agent` answers through the MCP server, static files 200.
-- ⏳ **nginx + TLS — Joy, needs the sudo password.** The sim is the site root and the MCP server is
-  `/mcp`, so ONE domain: run the script for the sim, then add the `/mcp` location by hand:
-  `sudo /var/www/server/scripts/new-site.sh alexa-plus alexa.zettabyteincorp.com 3030 --type next --no-www`
-  then in `/etc/nginx/sites-available/alexa-plus` add, inside the `server` block:
-  `location /mcp { proxy_pass http://127.0.0.1:3029/mcp; proxy_http_version 1.1; proxy_set_header Host $host; proxy_buffering off; proxy_read_timeout 300; }`
-  and `location /health { proxy_pass http://127.0.0.1:3029/health; }` — `sudo nginx -t && sudo systemctl reload nginx`.
-- ⏳ **CI key — Joy.** The classifier refused authorising a new key on the server. Either reuse
-  the deploy key the other eight repos use as the `SSH_KEY` secret of `joyahmed/alexa-plus`, or
-  make a dedicated ed25519 key, authorise its public half for `joy` on the server, and set the
-  private half as that secret. Until then a push to `main` fails at "Set up SSH" (harmless) and
-  the server is redeployed by hand: `cd /var/www/alexa-plus && git pull && pnpm install
-  --frozen-lockfile && pnpm build && pm2 startOrRestart ecosystem.config.cjs --update-env`
-  (with `.env` exported and nvm's node 24.11.1 on PATH).
+- ✅ **nginx + TLS live 2026-09-20** via `sudo new-site.sh alexa-plus alexa.zettabyteincorp.com 3030 --type next --no-www`
+  (Joy gave a scoped sudoers entry: `new-site.sh`, `nginx`, `systemctl reload nginx`, `tee sites-available/*`).
+  Hand edits after the script: `alias` → `apps/sim/.next/static/`; `location /mcp` → 3029 (no
+  buffering, 300s read); `location = /health` → 3029. Config: `/etc/nginx/sites-available/alexa-plus`.
+- ✅ `SSH_KEY` secret set by Joy (his `a CI key`, authorised for CI). Pushes to `main` deploy.
 
 ## First-time setup (reference — step 1 and DNS are done)
 
