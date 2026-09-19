@@ -28,7 +28,6 @@ module.exports = {
         PORT: 3030,
         HOSTNAME: '127.0.0.1',
         MCP_URL: 'http://127.0.0.1:3029/mcp',
-        AGENT: process.env.GEMINI_API_KEY ? 'gemini' : 'scripted',
       },
       watch: false,
       autorestart: true,
