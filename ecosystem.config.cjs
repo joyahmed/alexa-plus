@@ -16,5 +16,23 @@ module.exports = {
       autorestart: true,
       max_memory_restart: '300M',
     },
+    {
+      // The simulated Alexa+ (Next standalone). nginx serves it at / on the same domain, the MCP
+      // server at /mcp. Port 3030 — next free after 3029.
+      name: 'alexa-plus-sim',
+      script: 'apps/sim/.next/standalone/apps/sim/server.js',
+      cwd: '/var/www/alexa-plus',
+      interpreter: '/home/joy/.nvm/versions/node/v24.11.1/bin/node',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3030,
+        HOSTNAME: '127.0.0.1',
+        MCP_URL: 'http://127.0.0.1:3029/mcp',
+        AGENT: process.env.GEMINI_API_KEY ? 'gemini' : 'scripted',
+      },
+      watch: false,
+      autorestart: true,
+      max_memory_restart: '400M',
+    },
   ],
 };

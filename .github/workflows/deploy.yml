@@ -53,11 +53,14 @@ jobs:
           rm -rf node_modules apps/mcp/node_modules
           pnpm install --frozen-lockfile
           pnpm build
+          # Next standalone does not copy static assets or /public; the house pattern does it by hand.
+          cp -r apps/sim/.next/static apps/sim/.next/standalone/apps/sim/.next/static
+          cp -r apps/sim/public apps/sim/.next/standalone/apps/sim/public
 
           pm2 startOrRestart ecosystem.config.cjs --update-env
           pm2 save
 
-          echo "▶ Waiting for $APP_NAME on 127.0.0.1:$PORT/health"
+          echo "▶ Waiting for $APP_NAME on 127.0.0.1:$PORT/health (sim on 3030 is checked by nginx, not here)"
           for i in $(seq 1 20); do
             if node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"; then
               echo "✅ Health check passed after ${i} attempt(s)"
