@@ -36,19 +36,17 @@ Assumed until Joy says otherwise: repo/folder name stays `alexa-plus`; MCP endpo
 Goal: a self-hosted MCP server, spec 2025-11-25, Streamable HTTP, reachable over HTTPS, with
 3 real tools, proven with MCP Inspector. This alone passes Stage 1 judging.
 
-- [ ] `pnpm init` TypeScript project: `@modelcontextprotocol/sdk` (pin a version whose
-      protocol version list includes `2025-11-25`), `zod`, `hono` or Nest for HTTP.
-      Streamable HTTP transport, stateless mode first (simplest to host).
-- [ ] Tools v1: `get_property_guide`, `get_current_stay`, `report_issue`. Each with a zod
-      schema, a one-line description written *for a voice assistant* (short, imperative).
-- [ ] Auth: a per-tenant bearer token in the `Authorization` header; reject without it.
-      (Alexa+ integrations use OAuth in Preview — note it as v2, do not build it now.)
-- [ ] Data: SQLite (`better-sqlite3`) seeded with one demo property ("Lakeview"), its guide
-      entries, one current stay, vendors and a consumables list. Seed script is idempotent.
+- [x] `105b1bf` pnpm workspace, `apps/mcp`: `@modelcontextprotocol/sdk` 1.30.0 (LATEST_PROTOCOL_VERSION
+      = 2025-11-25), `zod`, `hono`. `WebStandardStreamableHTTPServerTransport`, stateless, JSON responses.
+- [x] `105b1bf` Tools v1: `get_property_guide`, `get_current_stay`, `report_issue`, zod schemas,
+      voice-first descriptions, `structuredContent` on every reply.
+- [x] `105b1bf` Auth: `MCP_TOKEN` bearer, 401 without it (tested). OAuth stays v2.
+- [x] `105b1bf` Data: `node:sqlite` (built into Node 24, nothing native) seeded with "Lakeview
+      Cabin", 6 guide entries, current + next stay, 3 vendors, 4 supplies. `SEED=1` is idempotent.
 - [ ] Deploy: the zetta VPS via `~/projects/04_dev/server/scripts/new-site.sh` (Joy runs the one
       `sudo` line), TLS by certbot, pm2, GitHub Actions deploy. `https://alexa.zettabyteincorp.com/mcp`.
-- [ ] Prove: `npx @modelcontextprotocol/inspector` connects, lists tools, calls all three.
-      Screenshot into `docs/proof/`.
+- [x] `105b1bf` Prove: Inspector CLI lists and calls all three → `docs/proof/phase-1-inspector.md`.
+      (UI screenshot still wanted for the video; CLI transcript is the judge-readable proof.)
 - [ ] Commit tagged `phase-1`.
 
 ## Phase 2 — The product + the simulated Alexa+ surface (28 Sep – 8 Oct)
