@@ -55,7 +55,7 @@ const runScripted = async (req: AgentRequest, house: House): Promise<Omit<AgentR
 
   if (/\b(yes|yeah|ok|okay|sure|please do|go ahead|book it)\b/.test(q)) {
     const prior = req.history.filter((h) => h.role === "alexa").at(-1)?.text ?? "";
-    const m = prior.match(/ticket (\d+)/i);
+    const m = prior.match(/ticket #?(\d+)/i);
     if (m) {
       tools.push(await house.call("schedule_repair", { ticket_id: Number(m[1]), preference: /morning/.test(q) ? "morning" : "afternoon" }));
       return say(String(last("schedule_repair")?.text));
@@ -102,8 +102,11 @@ export const runAgent = async (req: AgentRequest): Promise<AgentResponse> => {
         return { ...(await runGemini(req, house, key)), agent: "gemini" };
       } catch (err) {
         // Free-tier quota (429), a dead key or a model rename must never break the demo:
-        // degrade to the scripted agent and say so in the drawer.
-        console.warn("gemini failed, falling back to scripted:", err instanceof Error ? err.message : err);
+        // degrade to the scripted agent and say why in the drawer.
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn("gemini failed, falling back to scripted:", msg);
+        const reason = /RESOURCE_EXHAUSTED|429/.test(msg) ? "gemini free-tier quota (5 req/min) - scripted fallback" : "gemini error - scripted fallback";
+        return { ...(await runScripted(req, house)), agent: "scripted", note: reason };
       }
     }
     return { ...(await runScripted(req, house)), agent: "scripted" };

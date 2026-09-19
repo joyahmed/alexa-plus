@@ -19,4 +19,4 @@ export type Turn = {
 };
 
 export type AgentRequest = { text: string; history: Pick<Turn, "role" | "text">[] };
-export type AgentResponse = { text: string; cards: Card[]; tools: ToolTrace[]; agent: "gemini" | "scripted" };
+export type AgentResponse = { text: string; cards: Card[]; tools: ToolTrace[]; agent: "gemini" | "scripted"; note?: string };

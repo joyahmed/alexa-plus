@@ -27,6 +27,7 @@ export const useAlexaSession = () => {
   // Server renders "no mic"; the browser snapshot says whether Web Speech exists. No effect, no setState.
   const canListen = useSyncExternalStore(noop, () => srCtor() !== null, () => false);
   const [agent, setAgent] = useState<AgentResponse["agent"] | null>(null);
+  const [agentNote, setAgentNote] = useState<string | null>(null);
   const recognition = useRef<SpeechRecognitionLike | null>(null);
 
   const speak = (text: string) =>
@@ -58,6 +59,7 @@ export const useAlexaSession = () => {
       const data = (await res.json()) as AgentResponse | { error: string };
       if ("error" in data) throw new Error(data.error);
       setAgent(data.agent);
+      setAgentNote(data.note ?? null);
       setTurns((t) => [...t, { id: id(), role: "alexa", text: data.text, cards: data.cards, tools: data.tools, at: Date.now() }]);
       await speak(data.text);
     } catch (err) {
@@ -99,7 +101,7 @@ export const useAlexaSession = () => {
     return () => clearTimeout(t);
   }, [lastTurn, status]);
 
-  return { turns, status, draft, setDraft, submitDraft, listen, canListen, voiceOut, setVoiceOut, agent, ask, home };
+  return { turns, status, draft, setDraft, submitDraft, listen, canListen, voiceOut, setVoiceOut, agent, agentNote, ask, home };
 };
 
 export type AlexaSession = ReturnType<typeof useAlexaSession>;
