@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { Manrope } from "next/font/google";
 import "./globals.css";
+
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "The house that explains itself — Alexa+ simulation",
@@ -7,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
-  <html lang="en">
-    <body className="min-h-full antialiased">{children}</body>
+  <html lang="en" className={manrope.variable}>
+    <body className="min-h-full font-sans antialiased">{children}</body>
   </html>
 );
 
