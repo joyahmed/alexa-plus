@@ -57,7 +57,10 @@ export const registerHouseTools = (server: McpServer, db: Db, propertyId: string
       const when = (iso: string) => (iso.startsWith(t) ? "today" : "tomorrow");
       const lines: string[] = [];
       for (const k of tickets) lines.push(`${k.vendor_name ?? "A contractor"} is coming ${when(k.scheduled_at!)} at ${spoken(k.scheduled_at!.slice(11, 16))} for the ${k.category} issue you reported ("${k.description}").`);
-      for (const o of orders) lines.push(`The ${o.item} arrive ${when(o.eta)}.`);
+      // One line per item, however many orders: "2 packs of coffee pods arrive tomorrow."
+      const byItem = new Map<string, { item: string; quantity: number; eta: string }>();
+      for (const o of orders) { const k = `${o.item}|${o.eta}`; const cur = byItem.get(k); byItem.set(k, cur ? { ...cur, quantity: cur.quantity + o.quantity } : { ...o }); }
+      for (const o of byItem.values()) lines.push(`${o.quantity} ${o.quantity === 1 ? "pack" : "packs"} of ${o.item} arrive ${when(o.eta)}.`);
       if (stay?.check_out === t) lines.push(`Checkout is today at ${property()?.checkout_time ?? "11:00"}.`);
       else if (stay?.check_out === tomorrow) lines.push(`Checkout is tomorrow.`);
       if (next?.check_in === tomorrow) lines.push(`New guests arrive tomorrow.`);

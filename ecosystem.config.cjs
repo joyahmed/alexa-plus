@@ -11,7 +11,7 @@ module.exports = {
       interpreter: '/home/joy/.nvm/versions/node/v24.11.1/bin/node',
       // MCP_TOKEN, PROPERTY_ID and DB_PATH come from /var/www/alexa-plus/.env (server-owned,
       // never written by CI) via --update-env + dotenv-less export in the deploy step.
-      env: { NODE_ENV: 'production', PORT: 3029, SEED: '1' },
+      env: { NODE_ENV: 'production', PORT: 3029, SEED: '1', RESEED_HOURS: '6' },
       watch: false,
       autorestart: true,
       max_memory_restart: '300M',
