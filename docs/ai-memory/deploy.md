@@ -5,7 +5,22 @@ pm2 name `alexa-plus`, **port 3029** (first free after 3028 in nginx, checked 20
 Workflow: `.github/workflows/deploy.yml` (house pattern from zetta-claims-web: server pulls +
 builds, `.env` is server-owned, health check on `/health`). Process: `ecosystem.config.cjs`.
 
-## First-time setup — Joy runs these once (the assistant's classifier refuses server deploys)
+## State on 2026-09-20
+
+- ✅ `/var/www/alexa-plus` cloned at `7eaab71`, `.env` written on the server (MCP_TOKEN generated
+  there, `chmod 600`), built, **pm2 `alexa-plus` online on 3029**, `/health` OK.
+- ✅ DNS: `alexa.zettabyteincorp.com` A + AAAA → this server (`~/scripts/dns.sh add alexa`), resolving.
+- ⏳ **nginx + TLS — Joy, needs the sudo password:**
+  `sudo /var/www/server/scripts/new-site.sh alexa-plus alexa.zettabyteincorp.com 3029 --type api --no-www`
+- ⏳ **CI key — Joy.** The classifier refused authorising a new key on the server. Either reuse
+  the deploy key the other eight repos use as the `SSH_KEY` secret of `joyahmed/alexa-plus`, or
+  make a dedicated ed25519 key, authorise its public half for `joy` on the server, and set the
+  private half as that secret. Until then a push to `main` fails at "Set up SSH" (harmless) and
+  the server is redeployed by hand: `cd /var/www/alexa-plus && git pull && pnpm install
+  --frozen-lockfile && pnpm build && pm2 startOrRestart ecosystem.config.cjs --update-env`
+  (with `.env` exported and nvm's node 24.11.1 on PATH).
+
+## First-time setup (reference — step 1 and DNS are done)
 
 ```bash
 # 1. clone + .env + first start, no sudo needed
