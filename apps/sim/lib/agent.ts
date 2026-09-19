@@ -94,7 +94,15 @@ export const runAgent = async (req: AgentRequest): Promise<AgentResponse> => {
   const house = await connectHouse();
   try {
     const key = process.env.GEMINI_API_KEY;
-    if (key && process.env.AGENT !== "scripted") return { ...(await runGemini(req, house, key)), agent: "gemini" };
+    if (key && process.env.AGENT !== "scripted") {
+      try {
+        return { ...(await runGemini(req, house, key)), agent: "gemini" };
+      } catch (err) {
+        // Free-tier quota (429), a dead key or a model rename must never break the demo:
+        // degrade to the scripted agent and say so in the drawer.
+        console.warn("gemini failed, falling back to scripted:", err instanceof Error ? err.message : err);
+      }
+    }
     return { ...(await runScripted(req, house)), agent: "scripted" };
   } finally {
     await house.close();
