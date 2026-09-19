@@ -14,7 +14,7 @@ export const seed = (db: Db) => {
   const guide = db.prepare(
     `INSERT INTO guide_entries (property_id, topic, keywords, answer, image_url) VALUES ('lakeview', ?, ?, ?, ?)`,
   );
-  guide.run("hot tub", "hot tub,jacuzzi,spa", "Lift the grey cover and fold it onto the rail. Press the power button on the panel by the steps, then JETS. It takes about 15 minutes to warm up. Please put the cover back when you're done.", "/img/lakeview/hot-tub.jpg");
+  guide.run("hot tub", "hot tub,jacuzzi,spa", "Lift the grey cover and fold it onto the rail. Press the power button on the panel by the steps, then JETS. It takes about 15 minutes to warm up. Please put the cover back when you're done.", "/img/lakeview/hot-tub.svg");
   guide.run("wifi", "wifi,wi-fi,internet,password", "The network is Lakeview-Guest and the password is paddle2026. The router is in the hall cupboard if it ever needs a restart.", "/img/lakeview/wifi-qr.png");
   guide.run("heating", "heating,thermostat,cold,heat", "The thermostat is on the wall by the kitchen door. Turn the dial to raise the temperature; it is set to 20 degrees by default.", null);
   guide.run("checkout", "checkout,check out,leave,leaving", "Checkout is 11 am. Leave the keys on the kitchen table, put the towels in the bath, and pull the door shut behind you — it locks itself.", null);

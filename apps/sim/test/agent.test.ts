@@ -28,7 +28,7 @@ describe("scripted agent through the MCP server", () => {
     const res = await runAgent({ text: "How do I turn on the hot tub?", history: [] });
     expect(res.agent).toBe("scripted");
     expect(res.tools.map((t) => t.name)).toEqual(["get_property_guide"]);
-    expect(res.cards[0]).toMatchObject({ kind: "guide", title: "hot tub", imageUrl: "/img/lakeview/hot-tub.jpg" });
+    expect(res.cards[0]).toMatchObject({ kind: "guide", title: "hot tub", imageUrl: "/img/lakeview/hot-tub.svg" });
   });
 
   it("coffee pods are out → check, order, say where the spare is", async () => {

@@ -55,7 +55,7 @@ jobs:
           pnpm build
           # Next standalone does not copy static assets or /public; the house pattern does it by hand.
           cp -r apps/sim/.next/static apps/sim/.next/standalone/apps/sim/.next/static
-          cp -r apps/sim/public apps/sim/.next/standalone/apps/sim/public
+          [ -d apps/sim/public ] && cp -r apps/sim/public apps/sim/.next/standalone/apps/sim/public
 
           pm2 startOrRestart ecosystem.config.cjs --update-env
           pm2 save
