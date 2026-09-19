@@ -58,17 +58,13 @@ Goal: something a judge can *watch* and understand in 90 seconds.
       Resources: `property://<id>/guide`, `stay://current`. Prompt: `host-morning-briefing`.
       13 tests, proof in `docs/proof/phase-2-inspector.md`.
 - [ ] MCP App: `property-card` (guide + agenda as an interactive card).
-- [ ] Simulated Alexa+ web app (`apps/sim`, Next.js — Joy-framework conventions): a chat/voice
-      UI rendered to look like an Alexa+ conversation. Voice in via Web Speech API, voice out
-      via speechSynthesis. This is the demo surface if Preview access does not materialise,
-      and the B-roll if it does.
-      **Model budget is zero — no new API keys or subscriptions (Joy, 2026-09-17).** The agent
-      behind the sim is therefore:
-      1. For the recorded demo: **`claude -p` on the Max plan** with `--mcp-config` pointing at
-         our server (rules allow "any AI or agentic tool" for the simulated path). Codex CLI
-         `exec` with MCP is the equivalent if preferred.
-      2. For a live link judges can click: **Gemini API free tier** (function calling, no card).
-         Demo tenant data only. Optional — judges may score from video + text alone.
+- [x] `ba1415d` Simulated Alexa+ web app (`apps/sim`, Next 16 / React 19.3 / Tailwind 4): Echo
+      Show frame, light bar, transcript, media cards, Web Speech in / speechSynthesis out, a live
+      "MCP calls" panel for judges. Agent = Gemini free tier with function calling over the MCP
+      tool list (`GEMINI_API_KEY`), or `AGENT=scripted` keyword walker for a flake-free recording.
+      Both reach the house ONLY via `lib/mcp.ts` (SDK client, Streamable HTTP). 3 e2e tests.
+      ⏳ Not yet looked at in a browser: Playwright needs `sudo npx playwright install-deps`
+      (libnspr4 missing on WSL) — Joy, then run `design-critic` on it.
 - [ ] Seed three properties with distinct guides and overlapping bookings so
       `schedule_repair` visibly avoids a check-in. Friction log (`docs/friction-log.md`) from
       the first MCP call onward — it is worth +10 %.
