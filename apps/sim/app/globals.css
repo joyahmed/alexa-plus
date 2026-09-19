@@ -24,7 +24,7 @@ body { background: #d9d5cc; color: var(--color-ink); }
     radial-gradient(900px 500px at 90% 10%, rgba(200, 225, 255, .7), transparent 60%),
     linear-gradient(180deg, #ece8df 0%, #d9d5cc 55%, #b9b3a6 100%);
 }
-.counter { background: linear-gradient(180deg, rgba(0, 0, 0, .12), rgba(0, 0, 0, 0)); }
+.counter { background: radial-gradient(closest-side, rgba(0, 0, 0, .28), rgba(0, 0, 0, 0)); filter: blur(6px); }
 
 /* Echo Show body: fabric bezel with a faint weave, soft edge, deep shadow on the counter. */
 .bezel {

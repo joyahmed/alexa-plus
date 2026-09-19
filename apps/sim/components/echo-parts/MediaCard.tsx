@@ -4,7 +4,7 @@ const LABEL: Record<Card["kind"], string> = { guide: "House guide", order: "Orde
 
 // The card Alexa+ slides onto the screen next to what it says: the host's picture, an order, a booking.
 const MediaCard = ({ card }: { card: Card }) => (
-  <article className="w-[min(100%,420px)] shrink-0 overflow-hidden rounded-2xl bg-white/85 shadow-[0_10px_30px_-12px_rgba(0,0,0,.35)] backdrop-blur">
+  <article className="w-full overflow-hidden rounded-2xl bg-white/85 shadow-[0_10px_30px_-12px_rgba(0,0,0,.35)] backdrop-blur">
     {card.imageUrl && (
       // eslint-disable-next-line @next/next/no-img-element -- demo images from /public
       <img src={card.imageUrl} alt={card.title} className="aspect-[16/9] w-full object-cover" />
