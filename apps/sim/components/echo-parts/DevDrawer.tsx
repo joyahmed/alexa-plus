@@ -14,11 +14,19 @@ const DevDrawer = ({ turns, voiceOut, setVoiceOut, agent }: DevDrawerProps) => {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="fixed right-4 top-4 z-20 rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white shadow-lg"
+        aria-expanded={open}
+        aria-controls="dev-drawer"
+        className="fixed right-4 top-4 z-20 flex items-center gap-2 rounded-full bg-ink px-3.5 py-2 text-xs font-semibold text-white shadow-lg"
       >
-        MCP calls · {calls.length}
+        {open ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
+        ) : (
+          // A plug: the MCP connection.
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0V8ZM12 17v5" /></svg>
+        )}
+        {open ? "Close" : `MCP calls · ${calls.length}`}
       </button>
-      <aside className={`fixed inset-y-0 right-0 z-10 w-[min(100%,380px)] overflow-y-auto bg-white/95 p-5 text-sm shadow-2xl backdrop-blur transition-transform ${open ? "translate-x-0" : "translate-x-full"}`}>
+      <aside id="dev-drawer" className={`fixed inset-y-0 right-0 z-10 w-[min(100%,380px)] overflow-y-auto bg-white/95 p-5 text-sm shadow-2xl backdrop-blur transition-transform ${open ? "translate-x-0" : "translate-x-full"}`}>
         <h2 className="mt-10 text-base font-bold">Under the hood</h2>
         <p className="mt-1 text-ink-2">
           Agent: <b>{agent ?? "—"}</b>. Every answer goes through the house MCP server over Streamable HTTP

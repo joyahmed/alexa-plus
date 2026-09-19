@@ -12,10 +12,21 @@ const AboutDrawer = () => {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => setOpen((o) => !o)} className="fixed left-4 top-4 z-20 rounded-full bg-white/85 px-4 py-2 text-xs font-semibold text-ink shadow-lg backdrop-blur">
-        What is this?
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls="about-drawer"
+        className="fixed left-4 top-4 z-20 flex items-center gap-2 rounded-full bg-white/85 px-3.5 py-2 text-xs font-semibold text-ink shadow-lg backdrop-blur"
+      >
+        {open ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+        )}
+        {open ? "Close" : "What is this?"}
       </button>
-      <aside className={`fixed inset-y-0 left-0 z-10 w-[min(100%,420px)] overflow-y-auto bg-white/95 p-6 text-sm shadow-2xl backdrop-blur transition-transform ${open ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside id="about-drawer" className={`fixed inset-y-0 left-0 z-10 w-[min(100%,420px)] overflow-y-auto bg-white/95 p-6 text-sm shadow-2xl backdrop-blur transition-transform ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <h2 className="mt-10 text-xl font-extrabold leading-tight">The house that explains itself</h2>
         <p className="mt-3 text-ink-2">
           An Echo Show on the kitchen counter of a short-term rental. The guest — a stranger to the house — talks
