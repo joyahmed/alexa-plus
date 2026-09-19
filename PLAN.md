@@ -20,9 +20,10 @@ Assumed until Joy says otherwise: repo/folder name stays `alexa-plus`; MCP endpo
 - [x] Pick the idea — `84c62cc` DESIGN.md. Name: `alexa-plus` placeholder until Joy names it.
 - [ ] Register on Devpost for the hackathon (joy@zettabyteincorp.com — NOT Yahoo, see memory
       `gmail-hub-label-tree`; Yahoo is invisible and killed the Qwen follow-up).
-- [ ] Read /rules §3 "IS NOT open to" by hand → confirm Bangladesh absent. Note the finding here.
-- [ ] Read the Alexa+ resources section of /resources + the Builder Tools doc page. Answer
-      BRIEF.md open questions 1 and 2. Write the answers in `docs/ai-memory/alexa-plus-access.md`.
+- [x] /rules §3 read 2026-09-20: Brazil, Quebec, Russia, Crimea, Cuba, Iran, North Korea, OFAC —
+      Bangladesh absent. `docs/ai-memory/eligibility.md`.
+- [x] Builder Tools doc read 2026-09-20: Agent Skill = SKILL.md instruction set → `skill/the-house/`.
+      Preview access still unanswered (forum post is Joy's). `docs/ai-memory/alexa-plus-access.md`.
 - [ ] Post one question on the community forum / office hours: "Can an outside developer connect
       a self-hosted MCP server to an Alexa+ device during the hackathon, or is the simulated
       path expected?" Whatever the answer, we build both.
