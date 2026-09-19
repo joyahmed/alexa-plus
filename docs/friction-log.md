@@ -27,6 +27,16 @@ Kept from the first commit. Honest, dated, with what we did about each. (Judging
 7. **Devpost pages WAF-challenge datacenter IPs** (seen earlier on hackathon-radar): reading /rules
    from a VPS fails; read from a residential IP or via a proxy.
 
+8. **Gemini free tier, three surprises in one hour.** (a) `gemini-2.5-flash` is retired for new keys
+   — the 404 helpfully names `gemini-3.6-flash`. (b) Gemini 3 rejects a function-call turn rebuilt
+   from `functionCalls` — you must echo the model's own content back so its `thoughtSignature`
+   survives. (c) The free tier is **5 requests/minute** per project; with tools every turn costs
+   two, so ~2 guest turns a minute. We show it honestly: a cooldown caption on the screen with
+   Google's own `retryDelay`, and the scripted agent carries the same conversation meanwhile.
+9. **"State across sessions" cuts both ways on a public demo.** Every visitor's tickets and orders
+   stayed in the house; by evening the agenda said "the coffee pods arrive tomorrow" four times.
+   Fix: group per item, and reseed the demo house every 6 hours.
+
 ## What worked well
 
 - MCP spec 2025-11-25 + TypeScript SDK: a working Streamable HTTP server with bearer auth was one
