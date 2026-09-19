@@ -7,6 +7,7 @@ export const seed = (db: Db) => {
   for (const t of ["host_feed", "orders", "supplies", "vendors", "tickets", "stays", "guide_entries", "properties"]) {
     db.exec(`DELETE FROM ${t}`);
   }
+  db.exec(`DELETE FROM sqlite_sequence`); // ticket/order numbers start at 1 again after a reseed
   db.prepare(
     `INSERT INTO properties (id, name, address, checkout_time, wifi_ssid, wifi_password) VALUES (?, ?, ?, ?, ?, ?)`,
   ).run("lakeview", "Lakeview Cabin", "14 Shore Road, Lake Placid, NY", "11:00", "Lakeview-Guest", "paddle2026");
