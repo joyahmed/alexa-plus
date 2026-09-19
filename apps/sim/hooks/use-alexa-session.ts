@@ -32,7 +32,13 @@ export const useAlexaSession = () => {
     new Promise<void>((resolve) => {
       if (!voiceOut || typeof speechSynthesis === "undefined") return resolve();
       const u = new SpeechSynthesisUtterance(text);
-      const voice = speechSynthesis.getVoices().find((v) => /en-US/.test(v.lang) && /female|Samantha|Zira|Aria|Jenny/i.test(v.name)) ?? null;
+      // Prefer a neural voice (Edge's "Natural" voices, Google's, Apple's Samantha), then any en-US.
+      const voices = speechSynthesis.getVoices().filter((v) => /^en[-_]US/i.test(v.lang));
+      const voice =
+        voices.find((v) => /Natural|Online/i.test(v.name) && /Aria|Jenny|Ava|Emma|Michelle/i.test(v.name)) ??
+        voices.find((v) => /Natural|Online|Google US English|Samantha/i.test(v.name)) ??
+        voices.find((v) => /female|Zira|Aria|Jenny/i.test(v.name)) ??
+        voices[0] ?? null;
       if (voice) u.voice = voice;
       u.rate = 1.02; u.onend = () => resolve(); u.onerror = () => resolve();
       setStatus("speaking");
