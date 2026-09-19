@@ -44,11 +44,11 @@ Goal: a self-hosted MCP server, spec 2025-11-25, Streamable HTTP, reachable over
 - [x] `105b1bf` Auth: `MCP_TOKEN` bearer, 401 without it (tested). OAuth stays v2.
 - [x] `105b1bf` Data: `node:sqlite` (built into Node 24, nothing native) seeded with "Lakeview
       Cabin", 6 guide entries, current + next stay, 3 vendors, 4 supplies. `SEED=1` is idempotent.
-- [~] `1aa5b57` Deploy config done (workflow + pm2, port 3029). Joy: the three blocks in
-      `docs/ai-memory/deploy.md` (clone+start, `sudo new-site.sh`, `SSH_KEY` secret).
+- [x] `f8e77f6` Deployed: https://alexa.zettabyteincorp.com (sim) + `/mcp` (server), TLS, pm2 ×2,
+      CI deploy green on push to `main`. Details `docs/ai-memory/deploy.md`.
 - [x] `105b1bf` Prove: Inspector CLI lists and calls all three → `docs/proof/phase-1-inspector.md`.
       (UI screenshot still wanted for the video; CLI transcript is the judge-readable proof.)
-- [ ] Commit tagged `phase-1`.
+- [ ] Commit tagged `phase-1` — after the visual pass on the sim (needs `sudo npx playwright install-deps chromium` on WSL).
 
 ## Phase 2 — The product + the simulated Alexa+ surface (28 Sep – 8 Oct)
 
