@@ -48,7 +48,7 @@ Goal: a self-hosted MCP server, spec 2025-11-25, Streamable HTTP, reachable over
       CI deploy green on push to `main`. Details `docs/ai-memory/deploy.md`.
 - [x] `105b1bf` Prove: Inspector CLI lists and calls all three → `docs/proof/phase-1-inspector.md`.
       (UI screenshot still wanted for the video; CLI transcript is the judge-readable proof.)
-- [ ] Commit tagged `phase-1` — after the visual pass on the sim (needs `sudo npx playwright install-deps chromium` on WSL).
+- [x] `e0a2939` tagged `phase-1`. Visual pass done from the live site (Playwright in Docker on the server).
 
 ## Phase 2 — The product + the simulated Alexa+ surface (28 Sep – 8 Oct)
 
@@ -64,8 +64,7 @@ Goal: something a judge can *watch* and understand in 90 seconds.
       "MCP calls" panel for judges. Agent = Gemini free tier with function calling over the MCP
       tool list (`GEMINI_API_KEY`), or `AGENT=scripted` keyword walker for a flake-free recording.
       Both reach the house ONLY via `lib/mcp.ts` (SDK client, Streamable HTTP). 3 e2e tests.
-      ⏳ Not yet looked at in a browser: Playwright needs `sudo npx playwright install-deps`
-      (libnspr4 missing on WSL) — Joy, then run `design-critic` on it.
+      Looked at (`docs/proof/sim-*.png`): four defects found and fixed in `7829dc4`.
 - [ ] Seed three properties with distinct guides and overlapping bookings so
       `schedule_repair` visibly avoids a check-in. Friction log (`docs/friction-log.md`) from
       the first MCP call onward — it is worth +10 %.
