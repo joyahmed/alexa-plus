@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-echo-bg: #0b1220;
+  --color-echo-panel: #111a2e;
+  --color-echo-ring: #31c4f3;
+  --color-echo-text: #e8eef8;
+  --color-echo-muted: #8ea0bd;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html, body { height: 100%; background: #05080f; color: var(--color-echo-text); }
+
+@keyframes ring-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(49, 196, 243, .55); } 50% { box-shadow: 0 0 0 14px rgba(49, 196, 243, 0); } }
+.ring-listening { animation: ring-pulse 1.2s ease-out infinite; }
+@keyframes glow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.bar-thinking { animation: glow 1s ease-in-out infinite; }
