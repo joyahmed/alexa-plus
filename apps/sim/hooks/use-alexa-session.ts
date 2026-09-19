@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { AgentResponse, Turn } from "@/lib/types";
 
 // All the reactivity of the Echo screen: transcript, listening state, speech in, speech out,
@@ -17,6 +17,7 @@ type SRWindow = Window & { SpeechRecognition?: new () => SpeechRecognitionLike; 
 const id = () => Math.random().toString(36).slice(2);
 const srCtor = () => { const w = window as SRWindow; return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null; };
 const noop = () => () => {};
+const IDLE_MS = 60_000; // the real Echo Show drops back to its home screen after a quiet minute
 
 export const useAlexaSession = () => {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -86,7 +87,19 @@ export const useAlexaSession = () => {
 
   const submitDraft = () => void ask(draft);
 
-  return { turns, status, draft, setDraft, submitDraft, listen, canListen, voiceOut, setVoiceOut, agent, ask };
+  // Home: clear the screen. The house keeps its state (tickets, orders) — only the screen resets,
+  // which is exactly what makes "what's happening today?" work on the next visit.
+  const home = () => { setTurns([]); setDraft(""); };
+
+  // Auto-home after a quiet minute, restarted by any turn or status change.
+  const lastTurn = turns.at(-1)?.at ?? 0;
+  useEffect(() => {
+    if (!lastTurn || status !== "idle") return;
+    const t = setTimeout(home, IDLE_MS);
+    return () => clearTimeout(t);
+  }, [lastTurn, status]);
+
+  return { turns, status, draft, setDraft, submitDraft, listen, canListen, voiceOut, setVoiceOut, agent, ask, home };
 };
 
 export type AlexaSession = ReturnType<typeof useAlexaSession>;

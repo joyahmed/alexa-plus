@@ -21,7 +21,7 @@ const EchoClient = () => {
       </p>
       <AboutDrawer />
       <Device>
-        {session.turns.length === 0 ? <Ambient onPick={session.ask} /> : <Transcript turns={session.turns} status={session.status} />}
+        {session.turns.length === 0 ? <Ambient onPick={session.ask} /> : <Transcript turns={session.turns} status={session.status} onHome={session.home} />}
         <Composer {...session} />
         <LightBar status={session.status} />
       </Device>
