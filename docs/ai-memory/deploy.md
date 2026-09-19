@@ -10,8 +10,14 @@ builds, `.env` is server-owned, health check on `/health`). Process: `ecosystem.
 - ✅ `/var/www/alexa-plus` cloned at `7eaab71`, `.env` written on the server (MCP_TOKEN generated
   there, `chmod 600`), built, **pm2 `alexa-plus` online on 3029**, `/health` OK.
 - ✅ DNS: `alexa.zettabyteincorp.com` A + AAAA → this server (`~/scripts/dns.sh add alexa`), resolving.
-- ⏳ **nginx + TLS — Joy, needs the sudo password:**
-  `sudo /var/www/server/scripts/new-site.sh alexa-plus alexa.zettabyteincorp.com 3029 --type api --no-www`
+- ✅ **Sim too:** pm2 `alexa-plus-sim` on **3030** (Next standalone, `AGENT=scripted` until a
+  `GEMINI_API_KEY` is in `.env`), `/api/agent` answers through the MCP server, static files 200.
+- ⏳ **nginx + TLS — Joy, needs the sudo password.** The sim is the site root and the MCP server is
+  `/mcp`, so ONE domain: run the script for the sim, then add the `/mcp` location by hand:
+  `sudo /var/www/server/scripts/new-site.sh alexa-plus alexa.zettabyteincorp.com 3030 --type next --no-www`
+  then in `/etc/nginx/sites-available/alexa-plus` add, inside the `server` block:
+  `location /mcp { proxy_pass http://127.0.0.1:3029/mcp; proxy_http_version 1.1; proxy_set_header Host $host; proxy_buffering off; proxy_read_timeout 300; }`
+  and `location /health { proxy_pass http://127.0.0.1:3029/health; }` — `sudo nginx -t && sudo systemctl reload nginx`.
 - ⏳ **CI key — Joy.** The classifier refused authorising a new key on the server. Either reuse
   the deploy key the other eight repos use as the `SSH_KEY` secret of `joyahmed/alexa-plus`, or
   make a dedicated ed25519 key, authorise its public half for `joy` on the server, and set the
