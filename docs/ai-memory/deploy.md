@@ -1,6 +1,6 @@
 # Deploy — the VPS site
 
-Server: zetta (`ssh zetta`, the CI SSH port). App dir `/var/www/alexa-plus`,
+Server: zetta (`ssh zetta`; the CI deploy uses the CI SSH port). App dir `/var/www/alexa-plus`,
 pm2 name `alexa-plus`, **port 3029** (first free after 3028 in nginx, checked 2026-09-20).
 Workflow: `.github/workflows/deploy.yml` (house pattern from zetta-claims-web: server pulls +
 builds, `.env` is server-owned, health check on `/health`). Process: `ecosystem.config.cjs`.
@@ -16,7 +16,7 @@ builds, `.env` is server-owned, health check on `/health`). Process: `ecosystem.
   (Joy gave a scoped sudoers entry: `new-site.sh`, `nginx`, `systemctl reload nginx`, `tee sites-available/*`).
   Hand edits after the script: `alias` → `apps/sim/.next/static/`; `location /mcp` → 3029 (no
   buffering, 300s read); `location = /health` → 3029. Config: `/etc/nginx/sites-available/alexa-plus`.
-- ✅ `SSH_KEY` secret set by Joy (his `a CI key`, authorised for CI). Pushes to `main` deploy.
+- ✅ `SSH_KEY` secret set by Joy (a key already authorised for CI). Pushes to `main` deploy.
 
 ## First-time setup (reference — step 1 and DNS are done)
 
