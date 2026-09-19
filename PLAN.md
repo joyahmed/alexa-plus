@@ -43,8 +43,8 @@ Goal: a self-hosted MCP server, spec 2025-11-25, Streamable HTTP, reachable over
 - [x] `105b1bf` Auth: `MCP_TOKEN` bearer, 401 without it (tested). OAuth stays v2.
 - [x] `105b1bf` Data: `node:sqlite` (built into Node 24, nothing native) seeded with "Lakeview
       Cabin", 6 guide entries, current + next stay, 3 vendors, 4 supplies. `SEED=1` is idempotent.
-- [ ] Deploy: the zetta VPS via `~/projects/04_dev/server/scripts/new-site.sh` (Joy runs the one
-      `sudo` line), TLS by certbot, pm2, GitHub Actions deploy. `https://alexa.zettabyteincorp.com/mcp`.
+- [~] `1aa5b57` Deploy config done (workflow + pm2, port 3029). Joy: the three blocks in
+      `docs/ai-memory/deploy.md` (clone+start, `sudo new-site.sh`, `SSH_KEY` secret).
 - [x] `105b1bf` Prove: Inspector CLI lists and calls all three → `docs/proof/phase-1-inspector.md`.
       (UI screenshot still wanted for the video; CLI transcript is the judge-readable proof.)
 - [ ] Commit tagged `phase-1`.
