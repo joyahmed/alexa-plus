@@ -13,7 +13,7 @@ const MediaCard = ({ card }: { card: Card }) => (
     )}
     <div className="px-4 py-3">
       <h3 className="text-sm font-semibold capitalize">{card.title}</h3>
-      <p className="mt-1 text-sm text-echo-muted">{card.body}</p>
+      {card.body && <p className="mt-1 text-sm text-echo-muted">{card.body}</p>}
     </div>
   </article>
 );

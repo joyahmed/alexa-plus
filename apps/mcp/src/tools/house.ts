@@ -27,12 +27,14 @@ const text = (t: string, structured?: Record<string, unknown>) => ({
 
 const day = (d: Date) => d.toISOString().slice(0, 10);
 const addDays = (from: string, n: number) => { const d = new Date(from + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return day(d); };
+const spoken = (hhmm: string) => { const [h, m] = hhmm.split(":").map(Number); const ampm = h >= 12 ? "pm" : "am"; const hr = h % 12 || 12; return m ? `${hr}:${String(m).padStart(2, "0")} ${ampm}` : `${hr} ${ampm}`; };
 const weekday = (iso: string) => new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
 
 export const registerHouseTools = (server: McpServer, db: Db, propertyId: string) => {
   const today = () => day(new Date());
   const currentStay = () =>
     db.prepare(`SELECT id, guest_name, guests, check_in, check_out FROM stays WHERE property_id = ? AND check_in <= date('now') AND check_out >= date('now') ORDER BY check_in DESC LIMIT 1`).get(propertyId) as Stay | undefined;
+  const property = () => db.prepare(`SELECT checkout_time FROM properties WHERE id = ?`).get(propertyId) as { checkout_time: string } | undefined;
   const stays = () => db.prepare(`SELECT id, guest_name, guests, check_in, check_out FROM stays WHERE property_id = ? ORDER BY check_in`).all(propertyId) as Stay[];
   const feed = (kind: string, message: string) =>
     db.prepare(`INSERT INTO host_feed (property_id, kind, message, created_at) VALUES (?, ?, ?, ?)`).run(propertyId, kind, message, now());
@@ -49,17 +51,18 @@ export const registerHouseTools = (server: McpServer, db: Db, propertyId: string
     async () => {
       const t = today(); const tomorrow = addDays(t, 1);
       const stay = currentStay();
-      const tickets = db.prepare(`SELECT t.*, v.name AS vendor_name FROM tickets t LEFT JOIN vendors v ON v.id = t.vendor_id WHERE t.property_id = ? AND t.scheduled_at LIKE ? ORDER BY t.scheduled_at`).all(propertyId, `${t}%`) as (Ticket & { vendor_name: string | null })[];
-      const orders = db.prepare(`SELECT s.item, o.quantity, o.eta FROM orders o JOIN supplies s ON s.sku = o.sku AND s.property_id = o.property_id WHERE o.property_id = ? AND o.eta = ?`).all(propertyId, t) as { item: string; quantity: number; eta: string }[];
+      const tickets = db.prepare(`SELECT t.*, v.name AS vendor_name FROM tickets t LEFT JOIN vendors v ON v.id = t.vendor_id WHERE t.property_id = ? AND (t.scheduled_at LIKE ? OR t.scheduled_at LIKE ?) ORDER BY t.scheduled_at`).all(propertyId, `${t}%`, `${tomorrow}%`) as (Ticket & { vendor_name: string | null })[];
+      const orders = db.prepare(`SELECT s.item, o.quantity, o.eta FROM orders o JOIN supplies s ON s.sku = o.sku AND s.property_id = o.property_id WHERE o.property_id = ? AND o.eta IN (?, ?)`).all(propertyId, t, tomorrow) as { item: string; quantity: number; eta: string }[];
       const next = stays().find((s) => s.check_in > t);
+      const when = (iso: string) => (iso.startsWith(t) ? "today" : "tomorrow");
       const lines: string[] = [];
-      for (const k of tickets) lines.push(`${k.vendor_name ?? "A contractor"} is coming at ${k.scheduled_at!.slice(11, 16)} for the ${k.category} issue you reported (${k.description}).`);
-      for (const o of orders) lines.push(`${o.quantity} ${o.item} arrive today.`);
-      if (stay?.check_out === t) lines.push(`Checkout is today.`);
+      for (const k of tickets) lines.push(`${k.vendor_name ?? "A contractor"} is coming ${when(k.scheduled_at!)} at ${spoken(k.scheduled_at!.slice(11, 16))} for the ${k.category} issue you reported ("${k.description}").`);
+      for (const o of orders) lines.push(`The ${o.item} arrive ${when(o.eta)}.`);
+      if (stay?.check_out === t) lines.push(`Checkout is today at ${property()?.checkout_time ?? "11:00"}.`);
       else if (stay?.check_out === tomorrow) lines.push(`Checkout is tomorrow.`);
       if (next?.check_in === tomorrow) lines.push(`New guests arrive tomorrow.`);
-      const summary = lines.length ? lines.join(" ") : "Nothing is scheduled at the house today.";
-      return text(summary, { date: t, repairs: tickets, deliveries: orders, stay: stay ?? null, nextStay: next ?? null });
+      const summary = lines.length ? lines.join(" ") : "Nothing is scheduled at the house today or tomorrow.";
+      return text(summary, { date: t, summary, repairs: tickets, deliveries: orders, stay: stay ?? null, nextStay: next ?? null });
     },
   );
 
@@ -111,8 +114,8 @@ export const registerHouseTools = (server: McpServer, db: Db, propertyId: string
       const avoided = [...busy].filter((d) => d >= today() && d < date);
       const why = avoided.length ? ` I skipped ${avoided.map((d) => weekday(d)).join(" and ")} because that's a changeover day.` : "";
       return text(
-        `${vendor.name} is booked for ${weekday(date)} at ${time} for the ${ticket.category} issue.${why}${stay ? ` I've let ${stay.guest_name} and the host know.` : ""}`,
-        { ok: true, ticketId: ticket_id, vendor, scheduledAt, avoidedDays: avoided },
+        `${vendor.name} is booked for ${weekday(date)} at ${spoken(time)} for the ${ticket.category} issue.${why}${stay ? ` I've let ${stay.guest_name} and the host know.` : ""}`,
+        { ok: true, ticketId: ticket_id, vendor, scheduledAt, scheduledSpoken: `${weekday(date)} ${spoken(time)}`, avoidedDays: avoided },
       );
     },
   );
@@ -147,13 +150,14 @@ export const registerHouseTools = (server: McpServer, db: Db, propertyId: string
         .find((s) => s.item.includes(item.toLowerCase()) || item.toLowerCase().includes(s.item));
       if (!supply) return text(`I don't have a supplier item for ${item}. I've told the host.`, { ok: false, reason: "unknown_item" });
       const qty = quantity ?? 1;
+      const packs = `${qty} ${qty === 1 ? "pack" : "packs"} of ${supply.item}`;
       const result = await orderFromSupplier({ sku: supply.sku, quantity: qty, deliverTo: propertyId });
       const res = db.prepare(`INSERT INTO orders (property_id, sku, quantity, status, eta, created_at) VALUES (?, ?, ?, ?, ?, ?)`).run(propertyId, supply.sku, qty, result.status, result.eta, now());
       const orderId = Number(res.lastInsertRowid);
       feed("order", `Order #${orderId}: ${qty} × ${supply.item} (${supply.sku}), ${result.status}, arrives ${result.eta}`);
       return text(
-        `Ordered ${qty} ${supply.item}, arriving ${weekday(result.eta)}. Meanwhile: ${supply.location}. The host has been told.`,
-        { ok: true, orderId, sku: supply.sku, quantity: qty, status: result.status, eta: result.eta, meanwhile: supply.location, supplierRef: result.ref },
+        `Ordered ${packs}, arriving ${weekday(result.eta)}. Meanwhile: ${supply.location}. The host has been told.`,
+        { ok: true, orderId, sku: supply.sku, item: supply.item, quantity: qty, status: result.status, eta: result.eta, etaSpoken: weekday(result.eta), meanwhile: supply.location, supplierRef: result.ref },
       );
     },
   );

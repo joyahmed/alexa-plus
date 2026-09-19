@@ -9,9 +9,9 @@
   <rect x="80" y="228" width="480" height="36" rx="18" fill="url(#water)"/>
   <g fill="#e8eef8" opacity=".85"><circle cx="160" cy="240" r="4"/><circle cx="240" cy="236" r="3"/><circle cx="330" cy="242" r="5"/><circle cx="420" cy="238" r="3"/><circle cx="490" cy="241" r="4"/></g>
   <rect x="470" y="196" width="120" height="40" rx="6" fill="#6b7280"/><text x="530" y="221" text-anchor="middle" font-family="Inter, system-ui" font-size="14" fill="#e8eef8">grey cover</text>
-  <rect x="24" y="180" width="150" height="56" rx="8" fill="#111a2e" stroke="#31c4f3" stroke-width="2"/>
-  <circle cx="52" cy="208" r="10" fill="#31c4f3"/><text x="72" y="204" font-family="Inter, system-ui" font-size="12" fill="#e8eef8">1 POWER</text>
-  <circle cx="122" cy="208" r="10" fill="#31c4f3"/><text x="142" y="204" font-family="Inter, system-ui" font-size="12" fill="#e8eef8">2 JETS</text>
+  <rect x="24" y="176" width="190" height="60" rx="8" fill="#111a2e" stroke="#31c4f3" stroke-width="2"/>
+  <circle cx="46" cy="206" r="9" fill="#31c4f3"/><text x="62" y="211" font-family="Inter, system-ui" font-size="12" fill="#e8eef8">1 POWER</text>
+  <circle cx="136" cy="206" r="9" fill="#31c4f3"/><text x="152" y="211" font-family="Inter, system-ui" font-size="12" fill="#e8eef8">2 JETS</text>
   <text x="24" y="40" font-family="Inter, system-ui" font-size="22" font-weight="600" fill="#e8eef8">Hot tub</text>
   <text x="24" y="66" font-family="Inter, system-ui" font-size="14" fill="#8ea0bd">Lift the cover onto the rail · POWER, then JETS · ~15 min to warm</text>
 </svg>

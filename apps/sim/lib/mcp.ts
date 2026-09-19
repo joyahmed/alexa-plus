@@ -30,15 +30,16 @@ export const cardFromTool = ({ name, result }: ToolTrace): Card | null => {
   const r = result as Record<string, unknown>;
   switch (name) {
     case "get_property_guide":
-      return r.found ? { kind: "guide", title: String(r.topic), body: String(r.answer), imageUrl: (r.imageUrl as string | null) ?? null } : null;
+      // The bubble already speaks the answer; the card is the picture and a one-line caption.
+      return r.found ? { kind: "guide", title: String(r.topic), body: r.imageUrl ? "" : String(r.answer), imageUrl: (r.imageUrl as string | null) ?? null } : null;
     case "order_supply":
-      return r.ok ? { kind: "order", title: `Order #${r.orderId}`, body: `${r.quantity} × ${String(r.sku)} · arrives ${r.eta}` } : null;
+      return r.ok ? { kind: "order", title: `Order #${r.orderId} · ${String(r.item)}`, body: `${r.quantity} × ${String(r.sku)} · arrives ${String(r.etaSpoken ?? r.eta)}` } : null;
     case "schedule_repair":
       return r.ok
-        ? { kind: "repair", title: `Ticket #${r.ticketId} booked`, body: `${(r.vendor as { name: string }).name} · ${String(r.scheduledAt).replace("T", " ")}` }
+        ? { kind: "repair", title: `Ticket #${r.ticketId} booked`, body: `${(r.vendor as { name: string }).name} · ${String(r.scheduledSpoken ?? r.scheduledAt)}` }
         : null;
     case "get_todays_agenda":
-      return { kind: "agenda", title: `Today · ${r.date}`, body: String(r.text) };
+      return { kind: "agenda", title: "Today and tomorrow", body: String(r.text) };
     case "host_briefing":
       return { kind: "info", title: "Host briefing", body: String(r.text) };
     default:

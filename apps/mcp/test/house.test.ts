@@ -57,6 +57,8 @@ describe("the house, phase 2", () => {
     const date = booked.scheduledAt.slice(0, 10);
     const stay = await call("get_current_stay");
     expect([stay.stay.check_out, stay.nextStay.check_in]).not.toContain(date);
+    const agenda = await call("get_todays_agenda");
+    expect(agenda.summary).toMatch(/tomorrow at 3 pm .*shower is dripping/);
     const again = await call("schedule_repair", { ticket_id: t.ticketId });
     expect(again.ok).toBe(false);
     expect(again.reason).toBe("already_scheduled");
