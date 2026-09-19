@@ -15,7 +15,7 @@ const toDeclarations = (house: House): FunctionDeclaration[] =>
 
 const runGemini = async (req: AgentRequest, house: House, apiKey: string): Promise<Omit<AgentResponse, "agent">> => {
   const ai = new GoogleGenAI({ apiKey });
-  const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+  const model = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
   const contents: Content[] = [
     ...req.history.map((h) => ({ role: h.role === "guest" ? "user" : "model", parts: [{ text: h.text }] })),
     { role: "user", parts: [{ text: req.text }] },
