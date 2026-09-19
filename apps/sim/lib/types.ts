@@ -18,5 +18,6 @@ export type Turn = {
   at: number;
 };
 
-export type AgentRequest = { text: string; history: Pick<Turn, "role" | "text">[] };
-export type AgentResponse = { text: string; cards: Card[]; tools: ToolTrace[]; agent: "gemini" | "scripted"; note?: string };
+export type HistoryTurn = Pick<Turn, "role" | "text"> & { actions?: string[] };
+export type AgentRequest = { text: string; history: HistoryTurn[] };
+export type AgentResponse = { text: string; cards: Card[]; tools: ToolTrace[]; agent: "gemini" | "scripted"; note?: string; cooldownSec?: number };

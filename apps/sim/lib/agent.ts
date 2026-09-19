@@ -6,7 +6,7 @@ import type { AgentRequest, AgentResponse, Card, ToolTrace } from "./types";
 // set; otherwise a scripted agent that walks the same MCP tools by keyword, so the demo never
 // depends on a model being reachable. Both go through the MCP server and nothing else.
 
-const SYSTEM = `You are Alexa+ in a short-term rental, speaking to the guest in the house. Be brief and warm - one or two spoken sentences. Use the house tools for anything about the house: how things work, what's in stock, problems, what's happening today. When a guest reports a problem, log it with report_issue, then offer to book the repair and call schedule_repair when they agree. When something has run out, check_supplies then order_supply, and tell them where the spare is. Never invent facts about the house; if the tools don't know, say so.`;
+const SYSTEM = `You are Alexa+ in a short-term rental, speaking to the guest in the house. Be brief and warm - one or two spoken sentences. Use the house tools for anything about the house: how things work, what's in stock, problems, what's happening today. When a guest reports a problem, log it with report_issue, then offer to book the repair and call schedule_repair when they agree. When something has run out, check_supplies then order_supply, and tell them where the spare is. Never invent facts about the house; if the tools don't know, say so. Earlier turns in this conversation may carry an "Actions:" line listing tools already called and their results (ticket numbers, order numbers) - reuse those ids; never log the same issue or order the same item twice.`;
 
 const MAX_STEPS = 6;
 
@@ -17,7 +17,10 @@ const runGemini = async (req: AgentRequest, house: House, apiKey: string): Promi
   const ai = new GoogleGenAI({ apiKey });
   const model = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
   const contents: Content[] = [
-    ...req.history.map((h) => ({ role: h.role === "guest" ? "user" : "model", parts: [{ text: h.text }] })),
+    ...req.history.map((h) => ({
+      role: h.role === "guest" ? "user" : "model",
+      parts: [{ text: h.actions?.length ? `${h.text}\n(Actions: ${h.actions.join("; ")})` : h.text }],
+    })),
     { role: "user", parts: [{ text: req.text }] },
   ];
   const tools: ToolTrace[] = [];
@@ -105,8 +108,16 @@ export const runAgent = async (req: AgentRequest): Promise<AgentResponse> => {
         // degrade to the scripted agent and say why in the drawer.
         const msg = err instanceof Error ? err.message : String(err);
         console.warn("gemini failed, falling back to scripted:", msg);
-        const reason = /RESOURCE_EXHAUSTED|429/.test(msg) ? "gemini free-tier quota (5 req/min) - scripted fallback" : "gemini error - scripted fallback";
-        return { ...(await runScripted(req, house)), agent: "scripted", note: reason };
+        const quota = /RESOURCE_EXHAUSTED|429/.test(msg);
+        // Google says how long: "retryDelay":"20s" / "Please retry in 20.6s".
+        const retry = msg.match(/retryDelay"?:?\s*"?(\d+(?:\.\d+)?)s/)?.[1] ?? msg.match(/retry in (\d+(?:\.\d+)?)s/)?.[1];
+        const cooldownSec = quota ? Math.ceil(Number(retry ?? 20)) : undefined;
+        return {
+          ...(await runScripted(req, house)),
+          agent: "scripted",
+          note: quota ? "Gemini free tier: 5 requests/min" : "Gemini error",
+          cooldownSec,
+        };
       }
     }
     return { ...(await runScripted(req, house)), agent: "scripted" };

@@ -1,13 +1,13 @@
-import type { Turn } from "@/lib/types";
 import type { AlexaSession } from "@/hooks/use-alexa-session";
 import MediaCard from "./MediaCard";
+import AgentCaption from "./AgentCaption";
 
-type TranscriptProps = { turns: Turn[]; status: AlexaSession["status"]; onHome: () => void };
+type TranscriptProps = Pick<AlexaSession, "turns" | "status" | "agent" | "agentNote" | "cooldownUntil"> & { onHome: () => void };
 
 // What the Echo Show does when it answers: the guest's words small at the top, Alexa's reply
 // large on the left, the card on the right — the real device's text-plus-media layout. Older
 // exchanges recede into a quiet list above. Bottom padding clears the floating composer.
-const Transcript = ({ turns, status, onHome }: TranscriptProps) => {
+const Transcript = ({ turns, status, onHome, agent, agentNote, cooldownUntil }: TranscriptProps) => {
   const latest = turns.at(-1);
   const older = turns.slice(0, -1).slice(-4);
   const cards = latest?.cards ?? [];
@@ -30,7 +30,11 @@ const Transcript = ({ turns, status, onHome }: TranscriptProps) => {
           ) : (
             <div>
               <p className="text-[clamp(1.1rem,2.4vw,2rem)] font-semibold leading-snug">{latest.text}</p>
-              {status === "thinking" && <p className="mt-2 text-[clamp(.8rem,1.3vw,1rem)] text-ink-2">Asking the house…</p>}
+              {status === "thinking" ? (
+                <p className="mt-2 text-[clamp(.8rem,1.3vw,1rem)] text-ink-2">Asking the house…</p>
+              ) : (
+                <AgentCaption {...{ agent, agentNote, cooldownUntil }} />
+              )}
             </div>
           )}
           {cards.length > 0 && (

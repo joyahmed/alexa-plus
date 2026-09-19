@@ -28,6 +28,7 @@ export const useAlexaSession = () => {
   const canListen = useSyncExternalStore(noop, () => srCtor() !== null, () => false);
   const [agent, setAgent] = useState<AgentResponse["agent"] | null>(null);
   const [agentNote, setAgentNote] = useState<string | null>(null);
+  const [cooldownUntil, setCooldownUntil] = useState(0);
   const recognition = useRef<SpeechRecognitionLike | null>(null);
 
   const speak = (text: string) =>
@@ -51,7 +52,12 @@ export const useAlexaSession = () => {
     const clean = text.trim();
     if (!clean) return;
     setDraft("");
-    const history = turns.map(({ role, text }) => ({ role, text }));
+    // What each earlier answer actually did, so the model reuses ticket/order ids instead of redoing them.
+    const history = turns.map(({ role, text, tools }) => ({
+      role,
+      text,
+      actions: tools?.map((t) => { const r = t.result as Record<string, unknown>; const id = r.ticketId ?? r.orderId; return `${t.name}${id ? ` → #${id}` : ""}`; }),
+    }));
     setTurns((t) => [...t, { id: id(), role: "guest", text: clean, at: Date.now() }]);
     setStatus("thinking");
     try {
@@ -60,6 +66,7 @@ export const useAlexaSession = () => {
       if ("error" in data) throw new Error(data.error);
       setAgent(data.agent);
       setAgentNote(data.note ?? null);
+      setCooldownUntil(data.cooldownSec ? Date.now() + data.cooldownSec * 1000 : 0);
       setTurns((t) => [...t, { id: id(), role: "alexa", text: data.text, cards: data.cards, tools: data.tools, at: Date.now() }]);
       await speak(data.text);
     } catch (err) {
@@ -101,7 +108,7 @@ export const useAlexaSession = () => {
     return () => clearTimeout(t);
   }, [lastTurn, status]);
 
-  return { turns, status, draft, setDraft, submitDraft, listen, canListen, voiceOut, setVoiceOut, agent, agentNote, ask, home };
+  return { turns, status, draft, setDraft, submitDraft, listen, canListen, voiceOut, setVoiceOut, agent, agentNote, cooldownUntil, ask, home };
 };
 
 export type AlexaSession = ReturnType<typeof useAlexaSession>;
