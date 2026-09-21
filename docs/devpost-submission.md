@@ -37,6 +37,10 @@ The house is an MCP server. Alexa+ (or our simulated Echo Show) talks to it and 
   that doesn't collide with a check-in or check-out, books it on the guest's yes. Next morning:
   *"the plumber is coming at 3 for the shower you reported yesterday."*
 - **Host:** *"What happened at Lakeview this week?"* — a spoken briefing.
+- **One server, three houses.** Lakeview Cabin, Harbor Loft and Pine Ridge Chalet each have their
+  own guide, calendar, contractors and cupboards; the Echo in each unit is pointed at its house
+  with `/mcp?property=<id>`. In the loft the guest leaves tomorrow and the next arrives the day
+  after, so a repair reported today lands three days out — and the house says why.
 
 10 tools, 2 resources (`property://<id>/guide`, `stay://current`), 1 prompt
 (`host-morning-briefing`). Every answer carries `structuredContent`, which the device renders as a
@@ -56,7 +60,7 @@ media card. State lives in the house, so the second day knows what the first day
 - **Agent Skill** — `skill/the-house/SKILL.md` in the open SKILL.md format, plus a raw JSON-RPC
   client (`scripts/house.mjs`) for agents without an MCP client.
 - **Ops** — one VPS, pm2, nginx + TLS, GitHub Actions deploy on push to `main`, `/health`.
-  16 e2e tests run an SDK client over real Streamable HTTP. MCP Inspector CLI transcripts are in
+  22 e2e tests run an SDK client over real Streamable HTTP. MCP Inspector CLI transcripts are in
   `docs/proof/`.
 
 ### Challenges we ran into
@@ -94,8 +98,8 @@ Kept as a dated friction log (`docs/friction-log.md`). The headline ones:
 
 ### What's next
 
-Three seeded properties so the host briefing spans a portfolio; proactive check-in / check-out
-cards; an MCP App `property-card`; OAuth for Alexa+ Preview in place of the per-property token;
+A host briefing that spans the whole portfolio; proactive check-in / check-out cards; an MCP App
+`property-card`; OAuth for Alexa+ Preview in place of the per-property token;
 a real supplier adapter behind the interface that already exists.
 
 ## Built with
@@ -119,6 +123,9 @@ pm2 · nginx · github-actions · zod
 2. *The coffee pods are out.*
 3. *The shower is dripping.* → say *yes* to the plumber slot.
 4. *What's happening today?* — and again *tomorrow*.
+5. Another of the host's houses: https://alexa.zettabyteincorp.com/?house=harbor — *"What's the
+   door code?"*, then *"The radiator is cold."* → *yes*: the plumber lands three days out because
+   tomorrow is checkout and the day after is a check-in. `?house=pineridge` is the ski chalet.
 
 Open the "MCP calls" drawer to see every tool call each answer made. The live agent is Gemini on
 a free key (5 req/min — a cooldown caption appears; a scripted agent takes over with the same
