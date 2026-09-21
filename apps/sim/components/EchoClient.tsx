@@ -11,8 +11,8 @@ import AboutDrawer from "./echo-parts/AboutDrawer";
 
 // The room, the device on the counter, the screen. The screen shows the ambient home until the
 // first word, then the conversation. Everything reactive lives in useAlexaSession.
-const EchoClient = () => {
-  const session = useAlexaSession();
+const EchoClient = ({ house }: { house?: string }) => {
+  const session = useAlexaSession(house);
 
   return (
     <main className="room relative min-h-screen overflow-hidden">

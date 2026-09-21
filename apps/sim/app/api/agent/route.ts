@@ -8,7 +8,8 @@ export const POST = async (req: Request) => {
   const body = (await req.json()) as Partial<AgentRequest>;
   if (!body.text?.trim()) return NextResponse.json({ error: "text is required" }, { status: 400 });
   try {
-    const res = await runAgent({ text: body.text, history: (body.history ?? []).slice(-10) });
+    const house = /^[a-z0-9-]{1,32}$/.test(body.house ?? "") ? body.house : undefined;
+    const res = await runAgent({ text: body.text, history: (body.history ?? []).slice(-10), house });
     return NextResponse.json(res);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

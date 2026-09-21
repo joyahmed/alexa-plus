@@ -65,9 +65,9 @@ Goal: something a judge can *watch* and understand in 90 seconds.
       tool list (`GEMINI_API_KEY`), or `AGENT=scripted` keyword walker for a flake-free recording.
       Both reach the house ONLY via `lib/mcp.ts` (SDK client, Streamable HTTP). 3 e2e tests.
       Looked at (`docs/proof/sim-*.png`): four defects found and fixed in `7829dc4`.
-- [ ] Seed three properties with distinct guides and overlapping bookings so
-      `schedule_repair` visibly avoids a check-in. Friction log (`docs/friction-log.md`) from
-      the first MCP call onward — it is worth +10 %.
+- [x] Three properties seeded (`lakeview`, `harbor`, `pineridge`), one server serves them all via
+      `/mcp?property=<id>`; the loft's back-to-back changeover makes the skip visible. 18 + 4 tests.
+      Friction log (`docs/friction-log.md`) running since the first MCP call — it is worth +10 %.
 - [ ] Proactive: check-in and check-out cards, and the next-morning "plumber at 3 for the
       shower you reported yesterday" — state across sessions, shown as an Alexa+ notification.
 - [ ] `README.md` gets the architecture diagram (one image) and 5-minute run instructions.

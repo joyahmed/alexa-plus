@@ -65,9 +65,12 @@ const runScripted = async (req: AgentRequest, house: House): Promise<Omit<AgentR
     }
   }
   if (/\b(out|run out|ran out|empty|no more|low on)\b/.test(q)) {
-    const item = /coffee|pod/.test(q) ? "coffee pods" : /toilet|paper/.test(q) ? "toilet paper" : /dishwasher|tablet/.test(q) ? "dishwasher tablets" : /wood|fire/.test(q) ? "firewood" : null;
+    // Whatever this house stocks: the item whose name shares a word with what the guest said.
+    tools.push(await house.call("check_supplies", {}));
+    const stocked = (last("check_supplies")?.supplies ?? []) as { item: string }[];
+    const said = q.split(/\W+/).filter((w) => w.length > 3);
+    const item = stocked.find((s) => s.item.split(/\s+/).some((w) => w.length > 2 && q.includes(w.replace(/s$/, ""))) || said.some((w) => s.item.includes(w)))?.item;
     if (item) {
-      tools.push(await house.call("check_supplies", { item }));
       tools.push(await house.call("order_supply", { item }));
       return say(String(last("order_supply")?.text));
     }
@@ -97,7 +100,7 @@ const runScripted = async (req: AgentRequest, house: House): Promise<Omit<AgentR
 const cardsOf = (tools: ToolTrace[]): Card[] => tools.map(cardFromTool).filter((c): c is Card => c !== null);
 
 export const runAgent = async (req: AgentRequest): Promise<AgentResponse> => {
-  const house = await connectHouse();
+  const house = await connectHouse(req.house);
   try {
     const key = process.env.GEMINI_API_KEY;
     if (key && process.env.AGENT !== "scripted") {

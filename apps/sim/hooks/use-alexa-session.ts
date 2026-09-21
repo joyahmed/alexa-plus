@@ -19,7 +19,7 @@ const srCtor = () => { const w = window as SRWindow; return w.SpeechRecognition 
 const noop = () => () => {};
 const IDLE_MS = 60_000; // the real Echo Show drops back to its home screen after a quiet minute
 
-export const useAlexaSession = () => {
+export const useAlexaSession = (house?: string) => {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [status, setStatus] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
   const [draft, setDraft] = useState("");
@@ -61,7 +61,7 @@ export const useAlexaSession = () => {
     setTurns((t) => [...t, { id: id(), role: "guest", text: clean, at: Date.now() }]);
     setStatus("thinking");
     try {
-      const res = await fetch("/api/agent", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text: clean, history }) });
+      const res = await fetch("/api/agent", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text: clean, history, house }) });
       const data = (await res.json()) as AgentResponse | { error: string };
       if ("error" in data) throw new Error(data.error);
       setAgent(data.agent);

@@ -31,6 +31,13 @@ describe("scripted agent through the MCP server", () => {
     expect(res.cards[0]).toMatchObject({ kind: "guide", title: "hot tub", imageUrl: "/img/lakeview/hot-tub.svg" });
   });
 
+  it("another house on the same server: the loft stocks beans, not pods", async () => {
+    const res = await runAgent({ text: "We're out of coffee.", history: [], house: "harbor" });
+    expect(res.tools.map((t) => t.name)).toEqual(["check_supplies", "order_supply"]);
+    expect((res.tools[1].result as { item: string }).item).toBe("coffee beans");
+    expect(res.text).toMatch(/grinder/);
+  });
+
   it("coffee pods are out → check, order, say where the spare is", async () => {
     const res = await runAgent({ text: "The coffee pods are out.", history: [] });
     expect(res.tools.map((t) => t.name)).toEqual(["check_supplies", "order_supply"]);

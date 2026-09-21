@@ -17,6 +17,9 @@ Streamable HTTP, MCP spec 2025-11-25, bearer auth:
 MCP_URL=https://alexa.zettabyteincorp.com/mcp   Authorization: Bearer <MCP_TOKEN>
 ```
 
+The host has more than one house on this server: add `?property=harbor` (or `pineridge`) to the
+URL to be the Echo in that unit. Without it you are the default house, Lakeview Cabin.
+
 `scripts/house.mjs` is a tiny client for agents without native MCP: `node scripts/house.mjs tools`,
 `node scripts/house.mjs call get_property_guide '{"question":"how do I turn on the hot tub"}'`.
 

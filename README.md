@@ -76,6 +76,11 @@ And for the host: *"Alexa, what happened at Lakeview this week?"* → a spoken b
 
 Resources `property://<id>/guide`, `stay://current` · Prompt `host-morning-briefing`.
 
+One server, one host, **three houses** (`lakeview`, `harbor`, `pineridge`), each with its own guide,
+calendar, contractors and cupboards. The Echo in each unit is pointed at its house with
+`/mcp?property=<id>`; the sim takes `?house=<id>`. Try the loft: the guest leaves tomorrow and the
+next arrives the day after, so a repair reported today lands three days out and says why.
+
 ## 🚀 Run it locally
 
 ```bash

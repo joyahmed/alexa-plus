@@ -6,11 +6,13 @@ import type { Card, ToolTrace } from "./types";
 // The ONLY way the sim reaches the house: the MCP server over Streamable HTTP. It never touches
 // SQLite or the tools' code directly — that is the runtime-hook rule for the hackathon.
 
-export const connectHouse = async () => {
+export const connectHouse = async (house?: string) => {
   const MCP_URL = process.env.MCP_URL ?? "http://localhost:3101/mcp";
   const MCP_TOKEN = process.env.MCP_TOKEN ?? "demo";
+  const url = new URL(MCP_URL);
+  if (house) url.searchParams.set("property", house);
   const client = new Client({ name: "alexa-plus-sim", version: "0.1.0" });
-  const transport = new StreamableHTTPClientTransport(new URL(MCP_URL), {
+  const transport = new StreamableHTTPClientTransport(url, {
     requestInit: { headers: { authorization: `Bearer ${MCP_TOKEN}` } },
   });
   await client.connect(transport);
