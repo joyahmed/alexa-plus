@@ -23,11 +23,23 @@ module.exports = {
       script: 'apps/sim/.next/standalone/apps/sim/server.js',
       cwd: '/var/www/alexa-plus',
       interpreter: '/home/joy/.nvm/versions/node/v24.11.1/bin/node',
+      // The model keys are named here rather than left to inherit from the deploy shell.
+      // `pm2 startOrRestart --update-env` does not reliably refresh the environment of a process
+      // that is already running: GROQ_API_KEY was added to .env, the deploy sourced it, and the
+      // sim still came up without it and answered from the scripted agent. Only a manual
+      // `pm2 restart --update-env` picked it up. Listing them makes what the app needs explicit,
+      // and a conditional spread keeps an absent key absent rather than the string "undefined".
       env: {
         NODE_ENV: 'production',
         PORT: 3030,
         HOSTNAME: '127.0.0.1',
         MCP_URL: 'http://127.0.0.1:3029/mcp',
+        ...(process.env.MCP_TOKEN ? { MCP_TOKEN: process.env.MCP_TOKEN } : {}),
+        ...(process.env.GROQ_API_KEY ? { GROQ_API_KEY: process.env.GROQ_API_KEY } : {}),
+        ...(process.env.GROQ_MODEL ? { GROQ_MODEL: process.env.GROQ_MODEL } : {}),
+        ...(process.env.GEMINI_API_KEY ? { GEMINI_API_KEY: process.env.GEMINI_API_KEY } : {}),
+        ...(process.env.GEMINI_MODEL ? { GEMINI_MODEL: process.env.GEMINI_MODEL } : {}),
+        ...(process.env.AGENT ? { AGENT: process.env.AGENT } : {}),
       },
       watch: false,
       autorestart: true,
