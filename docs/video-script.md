@@ -48,13 +48,12 @@ already describes — the scripted agent walks the **same MCP tools**, and the d
 every call — so nothing in the video is misleading. But if you want the live model on screen,
 re-record with `GEMINI_API_KEY` set against a local instance; the picture is identical either way.
 
-## Which lines carry the entry
+## Delivery notes
 
-- **Line 5** is the continuity claim — report a leak today, and tomorrow the house still knows.
-  A smart-speaker demo usually cannot show that. It has the longest window; use it.
-- **Lines 8 and 9** are the differentiator. The calendar-aware repair is the one beat no other
-  entry will have. The pause between them is deliberate — the picture is doing work there.
-- **Line 6** is the proof beat. Say "real" plainly; the drawer on screen is the evidence.
+- Line 5 has the longest window on purpose; it is the continuity beat (report a leak today,
+  and tomorrow the house still knows who is coming).
+- Do not hurry the pause between lines 8 and 9 — the picture is doing the work there.
+- Line 6 is the proof beat. Say "real" plainly; the drawer on screen is the evidence.
 - No music. The rules forbid third-party music and the demo needs none.
 
 ## If the picture is re-recorded
