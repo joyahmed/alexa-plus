@@ -14,10 +14,10 @@ type AmbientProps = { onPick: (text: string) => void; header?: HouseHeader | nul
 const Ambient = ({ onPick, header }: AmbientProps) => {
   const { time, date } = useClock();
   return (
-    <div className="rise flex flex-1 flex-col justify-between p-[5%] pb-[14%]">
+    <div className="rise flex flex-1 flex-col justify-between p-[5%] pb-24 sm:pb-[14%]">
       <header className="flex items-start justify-between">
         <div>
-          <p className="text-[clamp(2.6rem,7vw,5.5rem)] font-extrabold leading-none tracking-tight tabular-nums">{time || " "}</p>
+          <p className="whitespace-nowrap text-[clamp(2.1rem,7vw,5.5rem)] font-extrabold leading-none tracking-tight tabular-nums">{time || " "}</p>
           <p className="mt-2 text-[clamp(.9rem,1.6vw,1.2rem)] font-medium text-ink-2">{date || " "}</p>
         </div>
         <div className="text-right">

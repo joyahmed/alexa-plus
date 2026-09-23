@@ -17,7 +17,7 @@ const EchoClient = ({ house, header }: { house?: string; header?: HouseHeader | 
 
   return (
     <main className="room relative min-h-screen overflow-hidden">
-      <p className="pointer-events-none absolute inset-x-0 top-5 z-0 text-center text-xs font-semibold tracking-wide text-ink-2">
+      <p className="pointer-events-none absolute inset-x-0 top-16 z-0 px-4 text-center text-xs font-semibold tracking-wide text-balance text-ink-2 sm:top-5">
         The house that explains itself · Alexa+ as the resident agent of a rental · simulated Echo Show
       </p>
       <AboutDrawer />

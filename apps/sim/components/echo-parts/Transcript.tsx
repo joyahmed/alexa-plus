@@ -7,12 +7,13 @@ type TranscriptProps = Pick<AlexaSession, "turns" | "status" | "agent" | "agentN
 // What the Echo Show does when it answers: the guest's words small at the top, Alexa's reply
 // large on the left, the card on the right — the real device's text-plus-media layout. Older
 // exchanges recede into a quiet list above. Bottom padding clears the floating composer.
+// Below `sm` the screen is portrait, so text and card stack instead of splitting the width.
 const Transcript = ({ turns, status, onHome, agent, agentNote, cooldownUntil }: TranscriptProps) => {
   const latest = turns.at(-1);
   const older = turns.slice(0, -1).slice(-4);
   const cards = latest?.cards ?? [];
   return (
-    <div className="relative flex flex-1 flex-col overflow-hidden p-[5%] pb-[13%]">
+    <div className="relative flex flex-1 flex-col overflow-hidden p-[5%] pb-24 sm:pb-[13%]">
       <button type="button" onClick={onHome} aria-label="Home" className="absolute right-[4%] top-[5%] rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-ink-2 backdrop-blur hover:bg-white">
         ⌂ Home
       </button>
@@ -24,7 +25,7 @@ const Transcript = ({ turns, status, onHome, agent, agentNote, cooldownUntil }: 
         ))}
       </ol>
       {latest && (
-        <section key={latest.id} className={`rise mt-auto grid items-end gap-[4%] pt-4 ${cards.length ? "grid-cols-[1.1fr_1fr]" : ""}`}>
+        <section key={latest.id} className={`rise mt-auto grid min-h-0 items-end gap-[4%] overflow-y-auto pt-4 ${cards.length ? "grid-cols-1 sm:grid-cols-[1.1fr_1fr]" : ""}`}>
           {latest.role === "guest" ? (
             <p className="text-[clamp(1.3rem,2.8vw,2.3rem)] font-bold leading-tight">“{latest.text}”</p>
           ) : (
