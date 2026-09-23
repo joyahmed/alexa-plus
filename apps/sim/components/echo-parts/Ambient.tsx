@@ -1,4 +1,5 @@
 import { useClock } from "@/hooks/use-clock";
+import type { HouseHeader } from "@/lib/mcp";
 
 const HINTS = [
   "Alexa, how do I turn on the hot tub?",
@@ -7,10 +8,10 @@ const HINTS = [
   "Alexa, what's happening today?",
 ];
 
-type AmbientProps = { onPick: (text: string) => void };
+type AmbientProps = { onPick: (text: string) => void; header?: HouseHeader | null };
 
 // The Echo Show home screen: clock, the house, one rotating "Try…" hint, and tappable prompts.
-const Ambient = ({ onPick }: AmbientProps) => {
+const Ambient = ({ onPick, header }: AmbientProps) => {
   const { time, date } = useClock();
   return (
     <div className="rise flex flex-1 flex-col justify-between p-[5%] pb-[14%]">
@@ -20,8 +21,11 @@ const Ambient = ({ onPick }: AmbientProps) => {
           <p className="mt-2 text-[clamp(.9rem,1.6vw,1.2rem)] font-medium text-ink-2">{date || " "}</p>
         </div>
         <div className="text-right">
-          <p className="text-[clamp(1rem,1.8vw,1.35rem)] font-bold">Lakeview Cabin</p>
-          <p className="text-[clamp(.8rem,1.3vw,1rem)] text-ink-2">Guest mode · checkout Tue 11 am</p>
+          {/* The unit this Echo is pointed at, read from the house itself — see readHouseHeader. */}
+          <p className="text-[clamp(1rem,1.8vw,1.35rem)] font-bold">{header?.name ?? "\u00a0"}</p>
+          <p className="text-[clamp(.8rem,1.3vw,1rem)] text-ink-2">
+            {header ? `Guest mode${header.checkout ? ` \u00b7 checkout ${header.checkout}` : ""}` : "\u00a0"}
+          </p>
         </div>
       </header>
       <div>

@@ -34,7 +34,7 @@ export const registerHouseTools = (server: McpServer, db: Db, propertyId: string
   const today = () => day(new Date());
   const currentStay = () =>
     db.prepare(`SELECT id, guest_name, guests, check_in, check_out FROM stays WHERE property_id = ? AND check_in <= date('now') AND check_out >= date('now') ORDER BY check_in DESC LIMIT 1`).get(propertyId) as Stay | undefined;
-  const property = () => db.prepare(`SELECT checkout_time FROM properties WHERE id = ?`).get(propertyId) as { checkout_time: string } | undefined;
+  const property = () => db.prepare(`SELECT name, checkout_time FROM properties WHERE id = ?`).get(propertyId) as { name: string; checkout_time: string } | undefined;
   const stays = () => db.prepare(`SELECT id, guest_name, guests, check_in, check_out FROM stays WHERE property_id = ? ORDER BY check_in`).all(propertyId) as Stay[];
   const feed = (kind: string, message: string) =>
     db.prepare(`INSERT INTO host_feed (property_id, kind, message, created_at) VALUES (?, ?, ?, ?)`).run(propertyId, kind, message, now());
@@ -222,8 +222,9 @@ export const registerHouseTools = (server: McpServer, db: Db, propertyId: string
     "stay://current",
     { title: "Current stay", description: "The booking in the house right now, and the next one.", mimeType: "application/json" },
     async (uri) => {
-      const stay = currentStay(); const next = stays().find((s) => s.check_in > today());
-      return { contents: [{ uri: uri.href, mimeType: "application/json", text: JSON.stringify({ stay: stay ?? null, nextStay: next ?? null }) }] };
+      const stay = currentStay(); const next = stays().find((s) => s.check_in > today()); const prop = property();
+      // `property` is what the Echo Show's idle header reads — the unit this device is pointed at.
+      return { contents: [{ uri: uri.href, mimeType: "application/json", text: JSON.stringify({ stay: stay ?? null, nextStay: next ?? null, property: prop ? { id: propertyId, name: prop.name, checkoutTime: prop.checkout_time } : null }) }] };
     },
   );
 

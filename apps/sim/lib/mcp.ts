@@ -48,3 +48,43 @@ export const cardFromTool = ({ name, result }: ToolTrace): Card | null => {
       return null;
   }
 };
+
+// ---- idle header ------------------------------------------------------------------------
+// The Echo Show's idle screen names the unit it is pointed at. That name is the house's, so it
+// comes over MCP like everything else — never a constant in the sim (it used to be, and every
+// `?house=` showed "Lakeview Cabin").
+export type HouseHeader = { name: string; checkout: string | null };
+
+const spokenCheckout = (date: string, time: string) => {
+  const day = new Date(`${date}T00:00:00`).toLocaleDateString("en-US", { weekday: "short" });
+  const [h, m] = time.split(":").map(Number);
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${day} ${hour}${m ? `:${String(m).padStart(2, "0")}` : ""} ${h >= 12 ? "pm" : "am"}`;
+};
+
+export const readHouseHeader = async (house?: string): Promise<HouseHeader | null> => {
+  const MCP_URL = process.env.MCP_URL ?? "http://localhost:3101/mcp";
+  const MCP_TOKEN = process.env.MCP_TOKEN ?? "demo";
+  const url = new URL(MCP_URL);
+  if (house) url.searchParams.set("property", house);
+  const client = new Client({ name: "alexa-plus-sim", version: "0.1.0" });
+  const transport = new StreamableHTTPClientTransport(url, {
+    requestInit: { headers: { authorization: `Bearer ${MCP_TOKEN}` } },
+  });
+  try {
+    await client.connect(transport);
+    const res = await client.readResource({ uri: "stay://current" });
+    const text = (res.contents as { text?: string }[])[0]?.text ?? "{}";
+    const { stay, property } = JSON.parse(text) as {
+      stay: { check_out: string } | null;
+      property: { id: string; name: string; checkoutTime: string } | null;
+    };
+    if (!property) return null;
+    return { name: property.name, checkout: stay ? spokenCheckout(stay.check_out, property.checkoutTime) : null };
+  } catch {
+    // An unreachable house must not print a wrong name — the header just goes quiet.
+    return null;
+  } finally {
+    await client.close().catch(() => {});
+  }
+};
