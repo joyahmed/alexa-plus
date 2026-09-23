@@ -37,11 +37,18 @@ const DevDrawer = ({ turns, voiceOut, setVoiceOut, agent, agentNote, cooldownUnt
         <div className="mt-3 rounded-xl border border-line bg-paper p-3">
           <p className="text-xs font-bold uppercase tracking-[.12em] text-ink-2">Model budget</p>
           <p className="mt-1">
-            Gemini 3.6 Flash, <b>free tier</b>: 5 requests per minute, about two guest turns. No card, no spend —
-            that was a rule of this build.
+            Three tiers, all free: <b>Groq</b> first, then <b>Gemini Flash</b> whose free tier is capped per
+            <i> day</i>, then a scripted agent that walks the same MCP tools. No card, no spend — that was a rule
+            of this build. Whichever answered is named below, never hidden.
           </p>
-          <p className={`mt-1 font-semibold ${left > 0 ? "text-amber-700" : "text-emerald-700"}`}>
-            {left > 0 ? `Cooling down · ${left}s · answers come from the house script meanwhile` : agent === "scripted" && agentNote ? `Scripted fallback (${agentNote})` : "Gemini available"}
+          <p className={`mt-1 font-semibold ${left > 0 ? "text-amber-700" : agent === "scripted" ? "text-amber-700" : "text-emerald-700"}`}>
+            {left > 0
+              ? `Cooling down · ${left}s · answers come from the house script meanwhile`
+              : agent === "scripted"
+                ? `Scripted fallback${agentNote ? ` (${agentNote})` : ""}`
+                : agent === "groq"
+                  ? "Answered by Groq"
+                  : "Answered by Gemini"}
           </p>
         </div>
         <label className="mt-3 flex items-center gap-2 text-ink-2">

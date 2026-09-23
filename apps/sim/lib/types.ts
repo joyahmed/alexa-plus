@@ -21,4 +21,4 @@ export type Turn = {
 export type HistoryTurn = Pick<Turn, "role" | "text"> & { actions?: string[] };
 // `house` picks the property on a multi-house server (`/mcp?property=`); empty = the server default.
 export type AgentRequest = { text: string; history: HistoryTurn[]; house?: string };
-export type AgentResponse = { text: string; cards: Card[]; tools: ToolTrace[]; agent: "gemini" | "scripted"; note?: string; cooldownSec?: number };
+export type AgentResponse = { text: string; cards: Card[]; tools: ToolTrace[]; agent: "groq" | "gemini" | "scripted"; note?: string; cooldownSec?: number };
