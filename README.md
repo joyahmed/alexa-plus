@@ -9,7 +9,7 @@
 [![MCP 2025-11-25](https://img.shields.io/badge/MCP-2025--11--25-31c4f3.svg)](https://modelcontextprotocol.io/specification/2025-11-25)
 [![Streamable HTTP](https://img.shields.io/badge/transport-Streamable%20HTTP-31c4f3.svg)](#-architecture)
 [![Node 24](https://img.shields.io/badge/node-24-339933.svg)](#-run-it-locally)
-[![Tests](https://img.shields.io/badge/tests-16%20passing-2ea44f.svg)](#-verify)
+[![Tests](https://img.shields.io/badge/tests-22%20passing-2ea44f.svg)](#-verify)
 
 **Live:** 🌐 **https://alexa.zettabyteincorp.com** — the simulated Alexa+ · 🔌 **`/mcp`** — the MCP
 server (bearer token in the Devpost testing notes).
