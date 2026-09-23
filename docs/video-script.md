@@ -1,6 +1,6 @@
 # Demo video — voiceover cue sheet
 
-Picture: `docs/video/alexa-demo.mp4` — **1:54.48**, 1920×1080, 25 fps, H.264.
+Picture: `docs/video/alexa-demo.mp4` — **1:54.80**, 1920×1080, 25 fps, H.264.
 Times below are **measured from the recording**, not estimated: the recorder timestamps every
 caption change, so each row's In/Out is exactly when that caption is on screen.
 
@@ -32,12 +32,21 @@ Quality of Idea. None of them is delivery.
 | 6 | 1:00 | 1:10 | 9.6 s | MCP drawer open, tool calls | "Every one of those answers was a real MCP tool call. This drawer shows them. Nothing is mocked." |
 | — | 1:10 | 1:14 | — | switching to the Harbor Loft | *(silence)* |
 | 7 | 1:14 | 1:21 | 6.5 s | Harbor Loft idle screen | "One server, three houses — each with its own calendar." |
-| 8 | 1:21 | 1:41 | 20.3 s | radiator reported → "yes" | "In this one, the guest leaves tomorrow, and the next arrives the day after. So a repair reported today cannot land tomorrow, and it cannot land the day after either." |
-| 9 | 1:41 | 1:47 | 6.0 s | booked card, Saturday slot | "It lands three days out — the first day nobody is checking in or out." |
-| — | 1:47 | 1:48 | — | — | *(silence)* |
-| 10 | 1:48 | 1:54 | 6.0 s | closing link card | "Live, open source, and honest about its limits. The house explains itself." |
+| 8 | 1:21 | 1:40 | 19.3 s | radiator reported → "yes" | "In this one, the guest leaves tomorrow, and the next arrives the day after. So a repair reported today cannot land tomorrow, and it cannot land the day after either." |
+| 9 | 1:40 | 1:46 | 6.0 s | booked card, Saturday slot | "It lands three days out — the first day nobody is checking in or out." |
+| — | 1:46 | 1:47 | — | — | *(silence)* |
+| 10 | 1:47 | 1:54 | 7.3 s | closing link card | "Live, open source, and honest about its limits. The house explains itself." |
 
 ---
+
+## One thing to know about the picture
+
+The answers in this take carry the caption *"Answered from the house script · Gemini free tier:
+5 requests/min"*. The demo is public and its free-tier key is shared with whoever else is on the
+site, so the live model was in cooldown throughout. This is the honest fallback the submission
+already describes — the scripted agent walks the **same MCP tools**, and the drawer still shows
+every call — so nothing in the video is misleading. But if you want the live model on screen,
+re-record with `GEMINI_API_KEY` set against a local instance; the picture is identical either way.
 
 ## Which lines carry the entry
 
