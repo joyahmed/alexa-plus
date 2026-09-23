@@ -3,6 +3,15 @@ name: 🚀 Deploy alexa-plus MCP server
 on:
   push:
     branches: [main]
+    # A commit that only touches prose does not need the server rebuilt: the deploy wipes
+    # node_modules, reinstalls and rebuilds both apps, and it fired four times in one evening
+    # for README and submission-sheet edits. GitHub skips the run only when EVERY changed path
+    # matches, so a commit touching docs and code still deploys. workflow_dispatch below is the
+    # escape hatch when a docs-only change does need to reach the server.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
   workflow_dispatch:
 
 concurrency:
