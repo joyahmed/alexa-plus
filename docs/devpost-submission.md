@@ -54,9 +54,11 @@ media card. State lives in the house, so the second day knows what the first day
   the VPS). A supplier *interface* with one simulated implementation backs `order_supply`.
 - **Simulated Alexa+** — Next 16 / React 19 Echo Show on a kitchen counter: Web Speech in,
   speechSynthesis out, media cards from `structuredContent`, and a judges' drawer that shows every
-  MCP call an answer made. The agent is Gemini function-calling over the server's `tools/list`
-  (free tier, quota shown honestly on screen) with a scripted agent that walks the same tools
-  when the quota is out. Both reach the house only through `/mcp` — never the database.
+  MCP call an answer made. The agent is function-calling over the server's `tools/list`, tried in
+  three tiers so a rate limit never becomes a dead demo: **Groq** (`openai/gpt-oss-120b`), then
+  **Gemini Flash**, then a scripted agent that walks the same tools. Gemini is second because its
+  free tier is capped per *day*, not per minute — the public demo spent it by evening. The drawer
+  names whichever answered. All three reach the house only through `/mcp` — never the database.
 - **Agent Skill** — `skill/the-house/SKILL.md` in the open SKILL.md format, plus a raw JSON-RPC
   client (`scripts/house.mjs`) for agents without an MCP client.
 - **Ops** — one VPS, pm2, nginx + TLS, GitHub Actions deploy on push to `main`, `/health`.
@@ -84,8 +86,9 @@ Kept as a dated friction log (`docs/friction-log.md`). The headline ones:
 - The continuity moment: report a leak today, and tomorrow's agenda says who is coming and why.
 - `schedule_repair` knows the booking calendar. Repairs land on the day nobody is checking in
   or out — the one rule every host has and no smart speaker knows.
-- The whole thing is honest about its limits: fictional property, simulated supplier, a visible
-  quota meter on the free model.
+- The whole thing is honest about its limits: fictional property, simulated supplier, and a
+  drawer that names which of the three agents answered instead of implying it was always the
+  best one.
 
 ### What we learned
 
@@ -105,7 +108,7 @@ a real supplier adapter behind the interface that already exists.
 ## Built with
 
 typescript · node.js · model-context-protocol · @modelcontextprotocol/sdk · streamable-http ·
-hono · sqlite (node:sqlite) · next.js · react · tailwindcss · gemini · web-speech-api · vitest ·
+hono · sqlite (node:sqlite) · next.js · react · tailwindcss · groq · gemini · web-speech-api · vitest ·
 pm2 · nginx · github-actions · zod
 
 ## Links
@@ -113,7 +116,7 @@ pm2 · nginx · github-actions · zod
 - Live simulated Alexa+: https://alexa.zettabyteincorp.com
 - MCP endpoint: https://alexa.zettabyteincorp.com/mcp
 - Repo (public, MIT): https://github.com/joyahmed/alexa-plus
-- Demo video: **TODO** — < 3 min, YouTube, public, English. Not recorded yet.
+- Demo video: https://youtu.be/tTrrnOgfYxM (1:53, public, Joy's own narration)
 
 ## Testing instructions (Devpost field)
 
@@ -127,9 +130,10 @@ pm2 · nginx · github-actions · zod
    door code?"*, then *"The radiator is cold."* → *yes*: the plumber lands three days out because
    tomorrow is checkout and the day after is a check-in. `?house=pineridge` is the ski chalet.
 
-Open the "MCP calls" drawer to see every tool call each answer made. The live agent is Gemini on
-a free key (5 req/min — a cooldown caption appears; a scripted agent takes over with the same
-tools). The demo house reseeds every 6 hours.
+Open the "MCP calls" drawer to see every tool call each answer made, and which of the three
+agents answered: Groq first, Gemini Flash second, a scripted agent last. All three are free keys
+and all three walk the same MCP tools, so the demo degrades instead of dying. The demo house
+reseeds every 6 hours.
 
 **MCP server directly** (spec 2025-11-25, Streamable HTTP):
 
