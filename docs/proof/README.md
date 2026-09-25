@@ -7,5 +7,7 @@
   MCP call the answers made.
 - `sim-03-phone.png` — the same at 390px.
 
-Screenshots are taken headless from the server with the official Playwright Docker image
-(`docker run --rm --network host mcr.microsoft.com/playwright:v1.56.0-noble`), script in `~/shots/shot.mjs` there.
+Screenshots are taken headless against the deployed site with `playwright-core` driving the
+chromium already in `~/.cache/ms-playwright` — 1280×800 for the desktop shots, 390×844 for the
+phone shot. Recaptured 2026-09-25, after the Groq-first agent change (`66fe189`): the answers in
+these shots come from Groq, so none of them carries the old "Answered from the house script" caption.
