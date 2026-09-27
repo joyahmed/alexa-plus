@@ -5,7 +5,7 @@ module.exports = {
     {
       name: 'alexa-plus',
       // Run node directly, never `pnpm start`: packageManager is pinned, so pnpm under pm2
-      // goes through corepack, which tries to download itself and dies (see zetta-claims-web).
+      // goes through corepack, which tries to download itself and dies.
       script: 'apps/mcp/dist/server.js',
       cwd: '/var/www/alexa-plus',
       interpreter: '/home/joy/.nvm/versions/node/v24.11.1/bin/node',
