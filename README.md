@@ -1,134 +1,149 @@
-# 🏡 The house that explains itself
+<div align="center">
 
-> **Alexa+ as the resident agent of a short-term rental.** A guest talks to the Echo Show on the
-> kitchen counter; the house answers with the host's own instructions, restocks what runs out,
-> books repairs around the booking calendar, and remembers it all the next morning.
-> The host never has to.
+# The house that explains itself
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-0b1220.svg)](LICENSE)
-[![MCP 2025-11-25](https://img.shields.io/badge/MCP-2025--11--25-31c4f3.svg)](https://modelcontextprotocol.io/specification/2025-11-25)
-[![Streamable HTTP](https://img.shields.io/badge/transport-Streamable%20HTTP-31c4f3.svg)](#-architecture)
-[![Node 24](https://img.shields.io/badge/node-24-339933.svg)](#-run-it-locally)
-[![Tests](https://img.shields.io/badge/tests-22%20passing-2ea44f.svg)](#-verify)
+**Alexa+ as the resident agent of a holiday rental.**<br>
+A guest talks to the Echo Show on the kitchen counter, and the house answers with the host's own instructions.
 
-**Live:** 🌐 **https://alexa.zettabyteincorp.com** — the simulated Alexa+ · 🔌 **`/mcp`** — the MCP
-server (bearer token in the Devpost testing notes).
+[![Hackathon entry](https://img.shields.io/badge/hackathon-Alexa%2B%20track-0b1220?style=flat-square)](https://amazonappdev2026.devpost.com/) [![MCP 2025-11-25](https://img.shields.io/badge/MCP-2025--11--25-31c4f3?style=flat-square)](https://modelcontextprotocol.io/specification/2025-11-25) [![License: MIT](https://img.shields.io/badge/license-MIT-1e293b?style=flat-square)](LICENSE)
 
-Entry for **Build, Ship, Shape: Amazon Developer Hackathon — Alexa+ track** · deadline 23 Oct 2026.
+Free · Demo data only · TypeScript MCP server + Next.js 16
 
----
+<br>
 
-## 🎬 Three things a guest says
+<img src="docs/gallery/01-home-at-rest.png" alt="The simulated Echo Show at rest on the kitchen counter, with the clock and a prompt to say or type a question" width="900">
 
-| 🗣️ The guest | 🤖 What the house does | 🧩 Judges' category |
-|---|---|---|
-| *"How do I turn on the hot tub?"* | Reads the host's steps, **shows the host's picture** on the screen. *"…and the wifi?"* → QR card. | media cards · state |
-| *"The coffee pods are out."* | Checks the cupboard, **orders a refill** from the host's supplier to the property, tells the guest where the spare box is, posts to the host's feed. | purchasing · across services |
-| *"The shower is dripping."* | Opens a ticket, picks the host's plumber, proposes the first slot that **doesn't collide with a check-in**, books it on the guest's yes. Next morning: *"the plumber is coming at 3 for the shower you reported yesterday."* | agentic workflow · state across sessions |
+</div>
 
-And for the host: *"Alexa, what happened at Lakeview this week?"* → a spoken briefing.
+<br>
 
-## 🧠 Why this, why Alexa+
+> **Hackathon entry.** I built this in October 2026 for the Alexa+ track of [Build, Ship, Shape: Amazon Developer Hackathon](https://amazonappdev2026.devpost.com/). The Echo Show here is a simulation in the browser, and every house, guest and plumber in it is made up.
 
-- 🏠 **The device is already in the room.** Hosts put Echos in rentals today; the guest is a
-  stranger to the house, and voice is the only sensible input for "how does the hot tub work".
-- 💸 **A named, paying customer.** Short-term-rental hosts answer the same twenty questions by text
-  at 11 pm. The property guide is written once and reused across every stay.
-- 🔁 **Alexa+'s own pitch, applied.** Agentic, across services (booking calendar + vendors +
-  supplier + host messaging), with memory — in the one building where the user doesn't know the house.
+## Why I built this
 
-## 🏗️ Architecture
+Holiday rental hosts answer the same twenty questions by text, often late at night. How does the hot tub work? What's the wifi? The shower is dripping.
+
+The guest is a stranger to the house, and there is often an Echo already in the room. So I made the house answer for itself. The host writes the guide once. The house reads it out, shows the host's own picture, orders what runs out, and books a repair around the next check-in.
+
+It's an MCP server that holds the house, and a simulated Echo Show that talks to it, the way Alexa+ would.
+
+## A quick look
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/gallery/02-hot-tub-card.png" alt="The Echo answering how to turn on the hot tub, with the host's picture on a card"><br>
+      <b>"How do I turn on the hot tub?"</b> The host's steps, with the host's picture.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/gallery/03-plumber-booking-mcp-drawer.png" alt="The Echo booking a plumber, with the MCP calls drawer open"><br>
+      <b>"The shower is dripping."</b> A ticket, then the host's plumber, booked. The drawer shows each MCP call.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/gallery/04-harbor-radiator-calendar-aware.png" alt="A repair in a second house, scheduled around the booking calendar"><br>
+      <b>Knows the calendar.</b> A repair never lands on a check-in day, and it says why.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/proof/sim-02-three-interactions.png" alt="The transcript after three guest requests"><br>
+      <b>Remembers.</b> Tickets, orders and bookings stay in the house's database.
+    </td>
+  </tr>
+</table>
+
+## Highlights
+
+- 🗣️ **Three things a guest says**: "how do I…", "we're out of coffee pods", "the shower is dripping". Each one is a real tool call.
+- 🧰 **10 MCP tools**: guide, current stay, issues, repairs, vendors, supplies, orders, today's agenda, host messages, host briefing.
+- 🏠 **Three houses, one server**: each with its own guide, calendar, contractors and cupboards. Point an Echo at one with `/mcp?property=<id>`.
+- 📅 **Calendar aware**: a repair goes on the first day that isn't a guest changeover.
+- 🎙️ **Voice in, voice out**: the browser's speech recognition and speech synthesis, or just type.
+- 🔎 **See the calls**: a drawer shows every MCP call the agent made, with its arguments.
+- 🧪 **Works without a model**: a scripted agent walks the same tools by keyword, so the demo never depends on a model being up. 22 tests.
+
+<details>
+<summary><b>How it is built</b> (click to open)</summary>
 
 ```
-┌───────────────────────────┐        Streamable HTTP · JSON-RPC · Bearer        ┌──────────────────────────────┐
-│  apps/sim  (Next 16)      │  ─────────────────────────────────────────────▶  │  apps/mcp  (Hono + MCP SDK)  │
-│  Echo Show UI · voice     │   tools/list · tools/call · resources · prompts  │  10 tools · 2 resources      │
-│  Gemini FC or scripted    │  ◀─────────────────────────────────────────────  │  1 prompt · node:sqlite      │
-│  agent (lib/agent.ts)     │        structuredContent → media cards           │  simulated supplier adapter  │
-└───────────────────────────┘                                                  └──────────────────────────────┘
-          │  the ONLY path to the house — never SQLite, never the tool code directly (runtime-hook rule)
-          ▼
-   🎙️ Web Speech in · 🔊 speechSynthesis out · 🪪 live "MCP calls" panel for judges
-
-   skill/the-house/   → the same server as an Agent Skill (SKILL.md + scripts/house.mjs)
+apps/sim  (Next 16)           Streamable HTTP · JSON-RPC · Bearer        apps/mcp  (Hono + MCP SDK)
+Echo Show UI · voice     ───────────────────────────────────────────▶   10 tools · 2 resources
+agent (lib/agent.ts)     ◀───────────────────────────────────────────   1 prompt · node:sqlite
+                                structuredContent → media cards          simulated supplier
 ```
 
-| Layer | Tech | Notes |
-|---|---|---|
-| MCP server | `@modelcontextprotocol/sdk` 1.30 · `WebStandardStreamableHTTPServerTransport` · Hono | Stateless, JSON responses, `MCP_TOKEN` bearer, protocol **2025-11-25** |
-| Data | `node:sqlite` (built into Node 24) | Properties, guide, stays, tickets, vendors, supplies, orders, host feed — fictional demo data |
-| Sim | Next 16 · React 19.3 · Tailwind 4 | Standalone build; hooks hold reactivity, components hold markup |
-| Agent | Gemini (function calling over the MCP tool list) **or** `AGENT=scripted` | The scripted agent walks the same tools by keyword — the recording never depends on a model |
-| Agent Skill | `skill/the-house/SKILL.md` | Open SKILL.md format; `scripts/house.mjs` is a raw JSON-RPC client for agents without MCP |
+The sim only reaches the house through the MCP server. It never reads the database or the tool code directly.
 
-### 🧰 The tools
+| Layer | Tech |
+|---|---|
+| MCP server | `@modelcontextprotocol/sdk` 1.30, Streamable HTTP over Hono. Stateless, JSON responses, bearer token, protocol 2025-11-25 |
+| Data | `node:sqlite`, built into Node 24. Nothing native to compile |
+| Sim | Next.js 16, React 19, Tailwind 4 |
+| Agent | Groq, then Gemini (function calling over the MCP tool list), then the scripted agent, tried in that order |
+| Agent Skill | `skill/the-house/SKILL.md`, plus `scripts/house.mjs`, a plain JSON-RPC client for agents without MCP |
 
 | Tool | For |
 |---|---|
-| `get_property_guide` | "How do I…", "where is…" — the host's instructions + picture |
+| `get_property_guide` | "How do I…", "where is…": the host's steps and picture |
 | `get_current_stay` | Who is in, checkout time, next arrival |
-| `report_issue` | Log a problem as a ticket (category, urgency) |
+| `report_issue` | Log a problem as a ticket |
 | `schedule_repair` | Book the host's contractor on the first non-changeover day |
 | `list_vendors` | The host's plumber, electrician, cleaner, handyman |
 | `check_supplies` / `order_supply` | What's in the cupboards; reorder to the property |
-| `get_todays_agenda` | Repairs, deliveries, checkout, arrivals — today and tomorrow |
+| `get_todays_agenda` | Repairs, deliveries, checkout and arrivals, today and tomorrow |
 | `notify_host` / `host_briefing` | Messages to the host; the host's summary |
 
-Resources `property://<id>/guide`, `stay://current` · Prompt `host-morning-briefing`.
+Resources: `property://<id>/guide`, `stay://current`. Prompt: `host-morning-briefing`.
 
-One server, one host, **three houses** (`lakeview`, `harbor`, `pineridge`), each with its own guide,
-calendar, contractors and cupboards. The Echo in each unit is pointed at its house with
-`/mcp?property=<id>`; the sim takes `?house=<id>`. Try the loft: the guest leaves tomorrow and the
-next arrives the day after, so a repair reported today lands three days out and says why.
+</details>
 
-## 🚀 Run it locally
+## Run it
 
-```bash
-nvm use 24                      # node:sqlite is built in — nothing native to compile
+You need Node 24 and pnpm.
+
+```
 pnpm install
 pnpm build
 
 # 1. the house
-MCP_TOKEN=demo SEED=1 node apps/mcp/dist/server.js            # http://localhost:3101/mcp
+MCP_TOKEN=demo SEED=1 node apps/mcp/dist/server.js       # http://localhost:3101/mcp
 
 # 2. the Echo Show (second terminal)
-cd apps/sim && MCP_URL=http://localhost:3101/mcp MCP_TOKEN=demo AGENT=scripted pnpm dev   # http://localhost:3102
+cd apps/sim && MCP_URL=http://localhost:3101/mcp MCP_TOKEN=demo AGENT=scripted pnpm dev
 ```
 
-Prove the server with MCP Inspector (what the judges see in [`docs/proof/`](docs/proof/)):
+Open the sim, and add `?house=harbor` to talk to a different house.
 
-```bash
+Check the server with MCP Inspector:
+
+```
 npx @modelcontextprotocol/inspector --cli http://localhost:3101/mcp --transport http \
   --header "Authorization: Bearer demo" --method tools/list
 ```
 
-Or with the Agent Skill's client: `node skill/the-house/scripts/house.mjs call get_property_guide '{"question":"how do I turn on the hot tub"}'`
+Tests: `pnpm typecheck && pnpm lint && pnpm test`. Inspector transcripts are in [docs/proof/](docs/proof/).
 
-## ✅ Verify
+## Watch it
 
-```bash
-pnpm typecheck && pnpm lint && pnpm test      # 13 mcp + 3 sim tests: SDK client over real Streamable HTTP
-NEXT_DIST_DIR=.next-verify pnpm --filter @alexa-plus/sim build
-```
+More of what I build: [youtube.com/@joysbuilds](https://www.youtube.com/@joysbuilds).
 
-## 📚 Repo map
+## Honest notes
 
-| Path | What |
-|---|---|
-| [`DESIGN.md`](DESIGN.md) | The idea, scored against the judges' creative list |
-| [`PLAN.md`](PLAN.md) | Phases with ticked boxes and commit hashes |
-| [`BRIEF.md`](BRIEF.md) | Hackathon facts: dates, prizes, rules, judging |
-| [`docs/friction-log.md`](docs/friction-log.md) | 🪵 Friction log — what was hard, what worked |
-| [`docs/proof/`](docs/proof/) | Inspector transcripts per phase |
-| [`docs/ai-memory/`](docs/ai-memory/) | Deploy, eligibility, access answers, session notes |
-| [`skill/the-house/`](skill/the-house/) | The Agent Skill |
+- Demo data only: made-up houses, guests and vendors. No real address, no real store, no card. "Ordering" writes a real order record through a supplier interface that has one simulated version.
+- The server uses a bearer token per property. OAuth would come next.
+- [DESIGN.md](DESIGN.md) has the idea, [PLAN.md](PLAN.md) the build phases, and the [friction log](docs/friction-log.md) what was hard.
 
-## 🔒 Honest notes
+## License
 
-- Demo data only: fictional property, guests, vendors. No real address, no real store, **no card** —
-  "purchasing" is a real order record through a supplier *interface* with one simulated implementation.
-- OAuth for Alexa+ Preview is v2; the server uses a per-property bearer token today.
+MIT. See [LICENSE](LICENSE).
 
-## 📄 License
+---
 
-MIT — see [`LICENSE`](LICENSE).
+<div align="center">
+
+I build tools I use myself, from Bangladesh. This one started as a hackathon entry, about houses that should be easier to stay in.<br>
+Found a bug or want something? [Open an issue](https://github.com/joyahmed/alexa-plus/issues).
+
+**Joy**
+
+</div>
