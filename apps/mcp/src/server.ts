@@ -22,6 +22,6 @@ if (process.env.SEED === "1") seed(db);
 const reseedHours = Number(process.env.RESEED_HOURS ?? 0);
 if (reseedHours > 0) setInterval(() => { seed(db); console.log("reseeded the demo house"); }, reseedHours * 3600_000);
 
-serve({ fetch: buildApp({ db, propertyId, token }).fetch, port }, (info) => {
+serve({ fetch: buildApp({ db, propertyId, token }).fetch, port, hostname: process.env.HOST ?? "127.0.0.1" }, (info) => {
   console.log(`the-house MCP server on http://localhost:${info.port}/mcp (property ${propertyId})`);
 });
