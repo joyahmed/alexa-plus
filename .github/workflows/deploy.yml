@@ -1,13 +1,9 @@
-name: 🚀 Deploy alexa-plus MCP server
+name: 🚀 Deploy alexa-plus
 
 on:
   push:
     branches: [main]
-    # A commit that only touches prose does not need the server rebuilt: the deploy wipes
-    # node_modules, reinstalls and rebuilds both apps, and it fired four times in one evening
-    # for README and submission-sheet edits. GitHub skips the run only when EVERY changed path
-    # matches, so a commit touching docs and code still deploys. workflow_dispatch below is the
-    # escape hatch when a docs-only change does need to reach the server.
+    # Prose-only commits do not need a rebuild; workflow_dispatch is the escape hatch.
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -15,69 +11,26 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-alexa-plus
+  group: zetta-server-deploy
   cancel-in-progress: false
 
+# The rebuilt Zetta server deploys itself: ci-deploy fast-forwards the checkout to origin/main,
+# installs, builds, restarts the service(s), health-checks and rolls back on failure.
+# Migrations and seeds are NOT run here (the deploy user cannot read the database password).
+# One checkout holds both apps (alexa-plus and alexa-plus-sim), so one call deploys both.
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Nothing is built on the runner; the server pulls and builds itself (house pattern).
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-
-      - name: Deploy to Zetta Server
+      - name: Deploy on the Zetta server
         env:
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          USERNAME: ${{ secrets.DEPLOY_USER }}
-          TARGET_DIR: /var/www/alexa-plus
-          APP_NAME: alexa-plus # must match ecosystem.config.cjs
-          PORT: 3029
-          NODE_BIN: /home/joy/.nvm/versions/node/v24.11.1/bin
-          SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
-          BRANCH: ${{ github.ref_name }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
-          ssh -p "$SSH_PORT" -o StrictHostKeyChecking=no -o ConnectTimeout=20 "$USERNAME@$HOST" \
-            "CI=true APP_NAME='$APP_NAME' TARGET_DIR='$TARGET_DIR' PORT='$PORT' \
-             NODE_BIN='$NODE_BIN' BRANCH='$BRANCH' bash -s" <<'REMOTE'
-          set -euo pipefail
-          export PATH="$NODE_BIN:$PATH"
-          cd "$TARGET_DIR"
-          echo "▶ node $(node -v), pnpm $(pnpm -v)"
-
-          git fetch --prune origin
-          git reset --hard "origin/$BRANCH"
-          echo "✅ Checked out $(git rev-parse --short HEAD) on $BRANCH"
-
-          # .env is server-owned: MCP_TOKEN, PROPERTY_ID, DB_PATH. CI never writes it.
-          if [ ! -f .env ]; then
-            echo "❌ .env is missing on the server — create it before deploying"
-            exit 1
-          fi
-          set -a; . ./.env; set +a
-          echo "✅ .env present (left untouched)"
-
-          rm -rf node_modules apps/mcp/node_modules
-          pnpm install --frozen-lockfile
-          pnpm build
-          # Next standalone does not copy static assets or /public; the house pattern does it by hand.
-          cp -r apps/sim/.next/static apps/sim/.next/standalone/apps/sim/.next/static
-          [ -d apps/sim/public ] && cp -r apps/sim/public apps/sim/.next/standalone/apps/sim/public
-
-          pm2 startOrRestart ecosystem.config.cjs --update-env
-          pm2 save
-
-          echo "▶ Waiting for $APP_NAME on 127.0.0.1:$PORT/health (sim on 3030 is checked by nginx, not here)"
-          for i in $(seq 1 20); do
-            if node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"; then
-              echo "✅ Health check passed after ${i} attempt(s)"
-              exit 0
-            fi
-            sleep 3
-          done
-          echo "❌ $APP_NAME did not respond on port $PORT"
-          pm2 logs "$APP_NAME" --lines 40 --nostream || true
-          exit 1
-          REMOTE
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=20 "deploy@$DEPLOY_HOST" alexa-plus
